@@ -91,8 +91,6 @@ def model_inference_load_model(params: dict, args: Namespace):
     except:
         logger.info(orjson.dumps(
             {"Errored": traceback.format_exc()}).decode('utf-8'))
-        return orjson.dumps(
-            {"Errored": traceback.format_exc()}).decode('utf-8')
     return orjson.dumps({"ok": 1})
 
 

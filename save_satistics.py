@@ -17,7 +17,7 @@ args = parse_arguments()
 seed_everything(args.seed)
 
 
-data_dir = os.path.join(args.data_dir, "data/structure_data/", args.dataset)
+data_dir = os.path.join(args.data_dir,  args.dataset)
 train_file = glob.glob("%s/tr*libsvm" % data_dir)[0]
 
 
@@ -30,10 +30,4 @@ train_loader = SQLAttacedLibsvmDataset(
 write_json(
     f"{args.dataset}_col_cardinalities",
     train_loader.col_cardinalities)
-
-"""
-export PYTHONPATH=$PYTHONPATH:./internal/ml/model_slicing
-python ./internal/ml/model_slicing/save_satistics.py --dataset frappe --data_dir ../exp_data/ --nfeat 5500 --nfield 10 --max_filter_col 10 --train_dir ./
-python ./internal/ml/model_slicing/save_satistics.py --dataset criteo --data_dir ../exp_data/ --nfeat 2100000 --nfield 39
-"""
 

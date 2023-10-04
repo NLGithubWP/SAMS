@@ -64,23 +64,27 @@ def model_inference_load_model(params: dict, args: Namespace):
 
         from src.data_loader import sql_attached_dataloader
         from profile_model import load_model
-        logger.info("Begin to read col_cardinalities_file")
         # read saved col_cardinatlites file
         if col_cardinalities is None:
             col_cardinalities = read_json(params["col_cardinalities_file"])
 
-        # # read the model path,
-        # model_path = params["model_path"]
-        # # get the where condition
-        # where_cond = params["where_cond"]
-        # selected_cols = where_cond[0]
-        # selected_values = where_cond[1]
+        # {'col_cardinalities_file': '/project/TRAILS/frappe_col_cardinalities',
+        #  'model_path': '/project/tensor_log/frappe/dnn_K16_alpha4',
+        #  'where_cond': '{"1":266, "2":1244}',
+        #  'config_file': '/project/TRAILS/internal/ml/model_selection/config.ini'}
         #
-        # # generate default sql and selected sql
-        # target_sql = [col[-1] for col in col_cardinalities]
-        # for col in selected_cols:
-        #     target_sql[col] = selected_values[col].item()
-        #
+        # read the model path,
+        model_path = params["model_path"]
+        # get the where condition
+        where_cond = json.loads(params["where_cond"])
+
+        # generate default sql and selected sql
+        target_sql = [col[-1] for col in col_cardinalities]
+        for col_index, value in where_cond.items():
+            target_sql[col_index] = value
+
+        logger.info(f"target_sql is: {target_sql}")
+
         # if model is None:
         #     logger.info("Load model .....!")
         #     model, config = load_model(model_path)

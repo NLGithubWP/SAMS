@@ -98,7 +98,8 @@ def model_inference_compute(params: dict, args: Namespace):
     from model_selection.src.logger import logger
     mini_batch = json.loads(params["mini_batch"])
     logger.info("-----"*10)
-    logger.info(f"Received parameters: {mini_batch}")
+
+    logger.info(f"Received status: {mini_batch['status']}")
 
     if mini_batch["status"] != 'success':
         raise Exception
@@ -106,12 +107,13 @@ def model_inference_compute(params: dict, args: Namespace):
     # pre-processing mini_batch
     transformed_data = [
         [int(item.split(':')[0]) for item in sublist[2:]]
-        for sublist in mini_batch["data"]
-    ]
+        for sublist in mini_batch["data"]]
+
+    logger.info(f"transformed data size: {len(transformed_data)}")
 
     begin = time.time()
     y = sliced_model(torch.LongTensor(transformed_data), None)
-    logger.info(f"Prediction Results = {y}")
+    logger.info(f"Prediction Results = {y.tolist()}")
     duration = time.time() - begin
     logger.info(f"time usage for compute {len(mini_batch)} rows is {duration}")
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')

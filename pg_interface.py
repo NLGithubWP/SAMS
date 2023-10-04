@@ -115,6 +115,7 @@ def model_inference_compute(params: dict, args: Namespace):
     y = sliced_model(torch.LongTensor(transformed_data), None)
     logger.info(f"Prediction Results = {y.tolist()}")
     duration = time.time() - begin
-    logger.info(f"time usage for compute {len(transformed_data)} rows is {duration}")
+    logger.info(f"time usage for compute {len(transformed_data)} rows is {duration}, "
+                f"data fetch time is {params['spi_seconds']}")
     logger.info("-----" * 10)
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')

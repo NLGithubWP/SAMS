@@ -79,11 +79,11 @@ def model_inference_load_model(params: dict, args: Namespace):
             target_sql[int(col_index)] = value
         logger.info(f"target_sql encoding is: {target_sql}")
 
-
         if model is None:
             logger.info("Load model .....")
             model, config = load_model(model_path)
-            sliced_model = model.tailor_by_sql(torch.tensor(target_sql))
+            model.eval()
+            sliced_model = model.tailor_by_sql(torch.tensor(target_sql).reshape(1,-1))
             sliced_model.eval()
             logger.info("Load model Done!")
         else:
@@ -101,8 +101,19 @@ def model_inference_compute(params: dict, args: Namespace):
     mini_batch = json.loads(params["mini_batch"])
     logger.info("-----"*10)
     logger.info(f"Received parameters: {mini_batch}")
-    # begin = time.time()
-    # y = mini_batch(mini_batch, None)
-    # duration = time.time() - begin
-    # logger.info(f"time usage for compute {len(mini_batch)} rows is {duration}")
+
+    if mini_batch["status"] != 'success':
+        raise Exception
+
+    # pre-processing mini_batch
+    transformed_data = [
+        [int(item.split(':')[0]) for item in sublist[2:]]
+        for sublist in mini_batch["data"]
+    ]
+
+    begin = time.time()
+    y = sliced_model(torch.LongTensor(transformed_data), None)
+    logger.info(f"Prediction Results = {y}")
+    duration = time.time() - begin
+    logger.info(f"time usage for compute {len(mini_batch)} rows is {duration}")
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')

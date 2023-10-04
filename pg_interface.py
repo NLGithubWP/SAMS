@@ -58,7 +58,7 @@ col_cardinalities = None
 @exception_catcher
 def model_inference_load_model(params: dict, args: Namespace):
     global model, sliced_model, col_cardinalities
-    from src.logger import logger
+    from model_selection.src.logger import logger
     try:
         logger.info(f"Received parameters: {params}")
 
@@ -99,7 +99,7 @@ def model_inference_load_model(params: dict, args: Namespace):
 @exception_catcher
 def model_inference_compute(params: dict, args: Namespace):
     global model, sliced_model, col_cardinalities
-    from src.logger import logger
+    from model_selection.src.logger import logger
     mini_batch = json.loads(params["mini_batch"])
     logger.info(f"Received parameters: {mini_batch}")
     # begin = time.time()

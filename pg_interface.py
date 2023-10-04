@@ -7,9 +7,7 @@ import orjson
 from argparse import Namespace
 from model_selection.shared_config import parse_config_arguments
 
-import random
 import torch
-from tqdm import tqdm
 
 
 def read_json(file_name):

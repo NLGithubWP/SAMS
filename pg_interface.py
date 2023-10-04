@@ -81,7 +81,7 @@ def model_inference_load_model(params: dict, args: Namespace):
             logger.info("Load model .....")
             model, config = load_model(model_path)
             model.eval()
-            sliced_model = model.tailor_by_sql(torch.tensor(target_sql).reshape(1,-1))
+            sliced_model = model.tailor_by_sql(torch.tensor(target_sql).reshape(1, -1))
             sliced_model.eval()
             logger.info("Load model Done!")
         else:

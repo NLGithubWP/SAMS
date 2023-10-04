@@ -15,7 +15,7 @@ from src.model.factory import initialize_model
 from fvcore.nn import FlopCountAnalysis
 from fvcore.nn import parameter_count_table
 
-def load_model(tensorboard_path: str):
+def load_model(tensorboard_path: str, device:str ="cuda"):
     """
     Args:
     tensorboard_path: the path of the directory of tensorboard
@@ -26,7 +26,7 @@ def load_model(tensorboard_path: str):
     net = initialize_model(model_config)
     
     model_pth_path = os.path.join(tensorboard_path, "best_model.pth")
-    saved_state_dict = torch.load(model_pth_path)
+    saved_state_dict = torch.load(model_pth_path, map_location=device)
 
     net.load_state_dict(saved_state_dict)
     print("successfully load model")
@@ -48,9 +48,6 @@ def reload_argparse(file_path:str):
     
     return argparse.Namespace(**d)   
 
-flag = False
-device = 'cuda'
-
 
 parser = argparse.ArgumentParser(description='predict FLOPS')
 parser.add_argument('path', type=str, 
@@ -60,12 +57,16 @@ parser.add_argument('--flag', '-p', action='store_true',
 parser.add_argument('--print_net', '--b', action='store_true',
                     help="print the structure of network")
 
+parser.add_argument('--device', type=str, default="cuda",
+                    help="gpu or cpu")
+
 if __name__ == '__main__':
     args = parser.parse_args()
     path = args.path
     flag = args.flag
+    device = args.device
     print(path)
-    net, config= load_model(path)
+    net, config= load_model(path, args.device)
     net:SparseMax_VerticalSAMS = net
     config.workload = 'random'
     

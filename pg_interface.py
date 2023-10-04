@@ -64,7 +64,7 @@ def model_inference_load_model(params: dict, args: Namespace):
 
         from src.data_loader import sql_attached_dataloader
         from profile_model import load_model
-
+        logger.info("Begin to read col_cardinalities_file")
         # read saved col_cardinatlites file
         if col_cardinalities is None:
             col_cardinalities = read_json(params["col_cardinalities_file"])
@@ -91,7 +91,7 @@ def model_inference_load_model(params: dict, args: Namespace):
     except:
         logger.info(orjson.dumps(
             {"Errored": traceback.format_exc()}).decode('utf-8'))
-    return orjson.dumps({"ok": 1})
+    return orjson.dumps({"ok": 1}).decode('utf-8')
 
 
 @exception_catcher

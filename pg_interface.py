@@ -99,23 +99,26 @@ def model_inference_compute(params: dict, args: Namespace):
     mini_batch = json.loads(params["mini_batch"])
     logger.info("-----"*10)
 
-    logger.info(f"Received status: {mini_batch['status']}")
+    time_usage_dic = {}
 
+    logger.info(f"Received status: {mini_batch['status']}")
     if mini_batch["status"] != 'success':
         raise Exception
 
     # pre-processing mini_batch
-    transformed_data = [
+    transformed_data = torch.LongTensor([
         [int(item.split(':')[0]) for item in sublist[2:]]
-        for sublist in mini_batch["data"]]
+        for sublist in mini_batch["data"]])
 
     logger.info(f"transformed data size: {len(transformed_data)}")
 
     begin = time.time()
-    y = sliced_model(torch.LongTensor(transformed_data), None)
-    logger.info(f"Prediction Results = {y.tolist()}")
-    duration = time.time() - begin
-    logger.info(f"time usage for compute {len(transformed_data)} rows is {duration}, "
-                f"data fetch time is {params['spi_seconds']}")
+    y = sliced_model(transformed_data, None)
+    logger.info(f"Prediction Results = {y.tolist()[:10]}")
+    
+    time_usage_dic["compute"] = time.time() - begin
+    time_usage_dic["data_fetch"] = params['spi_seconds']
+
+    logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     logger.info("-----" * 10)
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')

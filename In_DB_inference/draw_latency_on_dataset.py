@@ -29,7 +29,7 @@ set_lgend_size = 12
 set_tick_size = 12
 colors = ['#729ECE', '#FFB579', '#E74C3C', '#2ECC71', '#3498DB', '#F39C12', '#8E44AD', '#C0392B']
 
-hatches = ['/', '\\', 'x', 'o', 'O', '.', '*', '//', '\\\\', 'xx', 'oo', 'OO', '..', '**']
+hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
 
 
 # hatches = ['', '', '', '', '']
@@ -42,7 +42,7 @@ def get_median(latencies):
         median_compute = np.quantile(compute_values, 0.5)
         median_data_fetch = np.quantile(data_fetch_values, 0.5)
 
-        return {'median_compute': median_compute, 'median_data_fetch': median_data_fetch}
+        return {'median_compute': median_compute*100, 'median_data_fetch': median_data_fetch*100}
     else:
         return {'median_compute': 0, 'median_data_fetch': 0}
 
@@ -137,28 +137,28 @@ set_label_indb_inference = True
 
 for dataset, valuedic in datasets_result.items():
     indb_med = get_median(valuedic["In-Db"])
-    outgpudb_med = get_median(valuedic["In-Db"])
-    outcpudb_med = get_median(valuedic["In-Db"])
+    outgpudb_med = get_median(valuedic["out-DB-gpu"])
+    outcpudb_med = get_median(valuedic["out-DB-cpu"])
 
     # Left bar - out-db GPU
-    label_outdb_gpu_data = '(Out-DB, GPU) Data Retrievl Time' if set_label_outdb_gpu_data else None
-    label_outdb_gpu_inference = '(Out-DB, GPU) Inference Time' if set_label_outdb_gpu_inference else None
+    label_outdb_gpu_data = '(Out-DB/GPU) Data Retrievl' if set_label_outdb_gpu_data else None
+    label_outdb_gpu_inference = '(Out-DB/GPU) Compute' if set_label_outdb_gpu_inference else None
     ax.bar(index + bar_width , indb_med["median_data_fetch"], bar_width, color=colors[0], hatch=hatches[0],
            label=label_outdb_gpu_data, edgecolor='black')
     ax.bar(index + bar_width , indb_med["median_compute"], bar_width, color=colors[1], hatch=hatches[1],
            bottom=indb_med["median_data_fetch"], label=label_outdb_gpu_inference, edgecolor='black')
 
     # Right bar - out-db CPU
-    label_outdb_cpu_data = '(Out-DB, CPU) Data Retrievl' if set_label_outdb_cpu_data else None
-    label_outdb_cpu_inference = '(Out-DB, CPU) Inference Time' if set_label_outdb_cpu_inference else None
+    label_outdb_cpu_data = '(Out-DB/CPU) Data Retrievl' if set_label_outdb_cpu_data else None
+    label_outdb_cpu_inference = '(Out-DB/CPU) Compute' if set_label_outdb_cpu_inference else None
     ax.bar(index, outgpudb_med["median_data_fetch"], bar_width, color=colors[2], hatch=hatches[2],
            label=label_outdb_cpu_data, edgecolor='black')
     ax.bar(index , outgpudb_med["median_compute"], bar_width, color=colors[3], hatch=hatches[3],
            bottom=outgpudb_med["median_data_fetch"], label=label_outdb_cpu_inference, edgecolor='black')
 
     # Right bar - in-db
-    label_indb_data = '(In-DB, CPU) Data Retrievl' if set_label_indb_data else None
-    label_indb_inference = '(Out-DB, GPU) Inference Time' if set_label_indb_inference else None
+    label_indb_data = '(In-DB/CPU) Data Retrievl' if set_label_indb_data else None
+    label_indb_inference = '(Out-DB/GPU) Compute' if set_label_indb_inference else None
     ax.bar(index - bar_width , outcpudb_med["median_data_fetch"], bar_width, color=colors[4], hatch=hatches[4],
            label=label_indb_data, edgecolor='black')
     ax.bar(index - bar_width , outcpudb_med["median_compute"], bar_width, color=colors[5], hatch=hatches[5],
@@ -172,10 +172,10 @@ for dataset, valuedic in datasets_result.items():
     set_label_indb_data = False
     set_label_indb_inference = False
 
-ax.set_ylabel('Memory (MB)', fontsize=20)
+ax.set_ylabel('Inference Time (ms)', fontsize=20)
 ax.set_xticks(index)
 # ax.set_yscale('log')  # Set y-axis to logarithmic scale
-ax.set_xticklabels(datasets, rotation=10, fontsize=set_font_size)
+ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
 ax.legend(fontsize=set_lgend_size, loc=2)
 ax.yaxis.set_major_formatter(thousands_format)
 

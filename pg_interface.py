@@ -6,7 +6,7 @@ import traceback
 import orjson
 from argparse import Namespace
 from model_selection.shared_config import parse_config_arguments
-
+from multiprocessing import shared_memory
 import torch
 
 
@@ -96,37 +96,108 @@ def model_inference_load_model(params: dict, args: Namespace):
 def model_inference_compute(params: dict, args: Namespace):
     global model, sliced_model, col_cardinalities
     from model_selection.src.logger import logger
-    overall_begin = time.time()
-    mini_batch = json.loads(params["mini_batch"])
-    logger.info("-----"*10)
+    try:
 
-    time_usage_dic = {}
+        overall_begin = time.time()
+        mini_batch = json.loads(params["mini_batch"])
+        logger.info("-----" * 10)
 
-    logger.info(f"Received status: {mini_batch['status']}")
-    if mini_batch["status"] != 'success':
-        raise Exception
+        time_usage_dic = {}
 
-    begin = time.time()
-    # pre-processing mini_batch
-    transformed_data = torch.LongTensor([
-        [int(item.split(':')[0]) for item in sublist[2:]]
-        for sublist in mini_batch["data"]])
-    time_usage_dic["conver_to_tensor"] = time.time() - begin
+        logger.info(f"Received status: {mini_batch['status']}")
+        if mini_batch["status"] != 'success':
+            raise Exception
 
-    logger.info(f"transformed data size: {len(transformed_data)}")
+        begin = time.time()
+        # pre-processing mini_batch
+        transformed_data = torch.LongTensor([
+            [int(item.split(':')[0]) for item in sublist[2:]]
+            for sublist in mini_batch["data"]])
+        time_usage_dic["conver_to_tensor"] = time.time() - begin
 
-    begin = time.time()
-    y = sliced_model(transformed_data, None)
-    time_usage_dic["compute"] = time.time() - begin
-    logger.info(f"Prediction Results = {y.tolist()[:2]}...")
+        logger.info(f"transformed data size: {len(transformed_data)}")
 
-    time_usage_dic["data_fetch"] = params['spi_seconds']
+        begin = time.time()
+        y = sliced_model(transformed_data, None)
+        time_usage_dic["compute"] = time.time() - begin
+        logger.info(f"Prediction Results = {y.tolist()[:2]}...")
 
-    logger.info("-----" * 10)
-    overall_end = time.time()
-    time_usage_dic["overall_duration"] = overall_end - overall_begin
-    time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
-                             (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
+        time_usage_dic["data_fetch"] = params['spi_seconds']
 
-    logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
+        logger.info("-----" * 10)
+        overall_end = time.time()
+        time_usage_dic["overall_duration"] = overall_end - overall_begin
+        time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
+                                 (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
+
+        logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
+    except:
+        logger.info(orjson.dumps(
+            {"Errored": traceback.format_exc()}).decode('utf-8'))
+
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')
+
+
+@exception_catcher
+def model_inference_compute_shared_memory(params: dict, args: Namespace):
+    global model, sliced_model, col_cardinalities
+    from model_selection.src.logger import logger
+    try:
+        mini_batch_shared = get_data_from_shared_memory()
+        logger.info(f"mini_batch_shared: {mini_batch_shared[:100]}")
+
+        overall_begin = time.time()
+        mini_batch = json.loads(mini_batch_shared)
+        logger.info("-----" * 10)
+
+        time_usage_dic = {}
+
+        logger.info(f"Received status: {mini_batch['status']}")
+        if mini_batch["status"] != 'success':
+            raise Exception
+
+        begin = time.time()
+        # pre-processing mini_batch
+        transformed_data = torch.LongTensor([
+            [int(item.split(':')[0]) for item in sublist[2:]]
+            for sublist in mini_batch["data"]])
+        time_usage_dic["conver_to_tensor"] = time.time() - begin
+
+        logger.info(f"transformed data size: {len(transformed_data)}")
+
+        begin = time.time()
+        y = sliced_model(transformed_data, None)
+        time_usage_dic["compute"] = time.time() - begin
+        logger.info(f"Prediction Results = {y.tolist()[:2]}...")
+
+        time_usage_dic["data_fetch"] = params['spi_seconds']
+
+        logger.info("-----" * 10)
+        overall_end = time.time()
+        time_usage_dic["overall_duration"] = overall_end - overall_begin
+        time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
+                                 (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
+
+        logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
+    except:
+        logger.info(orjson.dumps(
+            {"Errored": traceback.format_exc()}).decode('utf-8'))
+
+    return orjson.dumps({"model_outputs": 1}).decode('utf-8')
+
+
+def get_data_from_shared_memory(shmem_name="my_shmem"):
+    # Open existing shared memory segment
+    shm = shared_memory.SharedMemory(name="my_shared_memory")
+    # Read data
+    data = shm.buf.tobytes().decode()
+    # Close
+    shm.close()
+    return data
+
+    # memory = posix_ipc.SharedMemory(shmem_name)
+    # mapfile = memory.map()
+    # return mapfile[:].tobytes().decode('utf-8')
+    # # # Convert the byte data to string and then to Python object (JSON decode)
+    # # data_str = mapfile.tobytes().decode('utf-8').rstrip('\x00')  # Remove padding null bytes
+    # # data = json.loads(data_str)

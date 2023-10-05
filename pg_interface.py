@@ -122,11 +122,11 @@ def model_inference_compute(params: dict, args: Namespace):
 
     time_usage_dic["data_fetch"] = params['spi_seconds']
 
-    logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     logger.info("-----" * 10)
     overall_end = time.time()
     time_usage_dic["overall_duration"] = overall_end - overall_begin
     time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
                              (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
 
+    logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')

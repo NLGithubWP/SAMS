@@ -192,10 +192,10 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
     from model_selection.src.logger import logger
     try:
         mini_batch_shared = get_data_from_shared_memory()
-        logger.info(f"mini_batch_shared: {mini_batch_shared}")
+        logger.info(f"mini_batch_shared: <-{mini_batch_shared}->, type: {type(mini_batch_shared)}")
 
         overall_begin = time.time()
-        mini_batch = json.loads(f"[{mini_batch_shared}]")
+        mini_batch = json.loads(mini_batch_shared)
         logger.info("-----" * 10)
 
         time_usage_dic = {}
@@ -237,11 +237,5 @@ def get_data_from_shared_memory(shmem_name="my_shmem"):
     data = shm.buf.tobytes().decode()
     # Close
     shm.close()
-    return data
+    return data.rstrip('\x00')
 
-    # memory = posix_ipc.SharedMemory(shmem_name)
-    # mapfile = memory.map()
-    # return mapfile[:].tobytes().decode('utf-8')
-    # # # Convert the byte data to string and then to Python object (JSON decode)
-    # # data_str = mapfile.tobytes().decode('utf-8').rstrip('\x00')  # Remove padding null bytes
-    # # data = json.loads(data_str)

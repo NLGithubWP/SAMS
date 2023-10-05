@@ -114,20 +114,20 @@ def model_inference_compute(params: dict, args: Namespace):
         transformed_data = torch.LongTensor([
             [int(item.split(':')[0]) for item in sublist[2:]]
             for sublist in mini_batch["data"]])
-        time_usage_dic["conver_to_tensor"] = time.time() - begin
+        time_usage_dic["py_conver_to_tensor"] = time.time() - begin
 
         logger.info(f"transformed data size: {len(transformed_data)}")
 
         begin = time.time()
         y = sliced_model(transformed_data, None)
-        time_usage_dic["compute"] = time.time() - begin
+        time_usage_dic["py_compute"] = time.time() - begin
         logger.info(f"Prediction Results = {y.tolist()[:2]}...")
 
         logger.info("-----" * 10)
         overall_end = time.time()
-        time_usage_dic["overall_duration"] = overall_end - overall_begin
-        time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
-                                 (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
+        time_usage_dic["py_overall_duration"] = overall_end - overall_begin
+        time_usage_dic["py_diff"] = time_usage_dic["py_overall_duration"] - \
+                                 (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
 
         logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     except:
@@ -160,20 +160,20 @@ def model_inference_compute_shared_memory(params: dict, args: Namespace):
         transformed_data = torch.LongTensor([
             [int(item.split(':')[0]) for item in sublist[2:]]
             for sublist in mini_batch["data"]])
-        time_usage_dic["conver_to_tensor"] = time.time() - begin
+        time_usage_dic["py_conver_to_tensor"] = time.time() - begin
 
         logger.info(f"transformed data size: {len(transformed_data)}")
 
         begin = time.time()
         y = sliced_model(transformed_data, None)
-        time_usage_dic["compute"] = time.time() - begin
+        time_usage_dic["py_compute"] = time.time() - begin
         logger.info(f"Prediction Results = {y.tolist()[:2]}...")
 
         logger.info("-----" * 10)
         overall_end = time.time()
-        time_usage_dic["overall_duration"] = overall_end - overall_begin
-        time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
-                                 (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
+        time_usage_dic["py_overall_duration"] = overall_end - overall_begin
+        time_usage_dic["py_diff"] = time_usage_dic["py_overall_duration"] - \
+                                 (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
 
         logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     except:
@@ -202,20 +202,20 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
         transformed_data = torch.LongTensor([
             [int(item.split(':')[0]) for item in sublist[2:]]
             for sublist in mini_batch])
-        time_usage_dic["conver_to_tensor"] = time.time() - begin
+        time_usage_dic["py_conver_to_tensor"] = time.time() - begin
 
         logger.info(f"transformed data size: {len(transformed_data)}")
 
         begin = time.time()
         y = sliced_model(transformed_data, None)
-        time_usage_dic["compute"] = time.time() - begin
+        time_usage_dic["py_compute"] = time.time() - begin
         logger.info(f"Prediction Results = {y.tolist()[:2]}...")
 
         logger.info("-----" * 10)
         overall_end = time.time()
-        time_usage_dic["overall_duration"] = overall_end - overall_begin
-        time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
-                                 (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
+        time_usage_dic["py_overall_duration"] = overall_end - overall_begin
+        time_usage_dic["py_diff"] = time_usage_dic["py_overall_duration"] - \
+                                 (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
 
         logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     except:
@@ -225,14 +225,13 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')
 
 
-@exception_catcher
-def records_results(params: dict, args: Namespace):
+def records_results(params: str):
     global time_usage_dic
     from model_selection.src.logger import logger
     try:
-        params.pop("config_file")
+        params = json.loads(params)
         params.update(time_usage_dic)
-        logger.info(f"final result = params")
+        logger.info(f"final result = {params}")
     except:
         logger.info(orjson.dumps(
             {"Errored": traceback.format_exc()}).decode('utf-8'))

@@ -186,6 +186,50 @@ def model_inference_compute_shared_memory(params: dict, args: Namespace):
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')
 
 
+@exception_catcher
+def model_inference_compute_shared_memory_write_once(params: dict, args: Namespace):
+    global model, sliced_model, col_cardinalities
+    from model_selection.src.logger import logger
+    try:
+        mini_batch_shared = get_data_from_shared_memory()
+        logger.info(f"mini_batch_shared: {mini_batch_shared}")
+
+        overall_begin = time.time()
+        mini_batch = json.loads(f"[{mini_batch_shared}]")
+        logger.info("-----" * 10)
+
+        time_usage_dic = {}
+
+        begin = time.time()
+        # pre-processing mini_batch
+        transformed_data = torch.LongTensor([
+            [int(item.split(':')[0]) for item in sublist[2:]]
+            for sublist in mini_batch])
+        time_usage_dic["conver_to_tensor"] = time.time() - begin
+
+        logger.info(f"transformed data size: {len(transformed_data)}")
+
+        begin = time.time()
+        y = sliced_model(transformed_data, None)
+        time_usage_dic["compute"] = time.time() - begin
+        logger.info(f"Prediction Results = {y.tolist()[:2]}...")
+
+        time_usage_dic["data_fetch"] = params['spi_seconds']
+
+        logger.info("-----" * 10)
+        overall_end = time.time()
+        time_usage_dic["overall_duration"] = overall_end - overall_begin
+        time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
+                                 (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
+
+        logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
+    except:
+        logger.info(orjson.dumps(
+            {"Errored": traceback.format_exc()}).decode('utf-8'))
+
+    return orjson.dumps({"model_outputs": 1}).decode('utf-8')
+
+
 def get_data_from_shared_memory(shmem_name="my_shmem"):
     # Open existing shared memory segment
     shm = shared_memory.SharedMemory(name="my_shared_memory")

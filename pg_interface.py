@@ -114,9 +114,9 @@ def model_inference_compute(params: dict, args: Namespace):
 
     begin = time.time()
     y = sliced_model(transformed_data, None)
+    time_usage_dic["compute"] = time.time() - begin
     logger.info(f"Prediction Results = {y.tolist()[:2]}...")
 
-    time_usage_dic["compute"] = time.time() - begin
     time_usage_dic["data_fetch"] = params['spi_seconds']
 
     logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")

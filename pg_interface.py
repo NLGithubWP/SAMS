@@ -192,7 +192,7 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
     from model_selection.src.logger import logger
     try:
         mini_batch_shared = get_data_from_shared_memory()
-        logger.info(f"mini_batch_shared: <-{mini_batch_shared}->, type: {type(mini_batch_shared)}")
+        logger.info(f"mini_batch_shared: <-{mini_batch_shared[:50]}->, type: {type(mini_batch_shared)}")
 
         overall_begin = time.time()
         mini_batch = json.loads(mini_batch_shared)

@@ -173,10 +173,11 @@ for dataset, valuedic in datasets_result.items():
     set_label_indb_inference = False
 
 ax.set_ylabel('Inference Time (ms)', fontsize=20)
+ax.set_ylim(top=70)
 ax.set_xticks(index)
 # ax.set_yscale('log')  # Set y-axis to logarithmic scale
 ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
-ax.legend(fontsize=set_lgend_size, loc=2)
+ax.legend(fontsize=set_lgend_size-2, ncol=2)
 ax.yaxis.set_major_formatter(thousands_format)
 
 ax.tick_params(axis='y', which='major', labelsize=set_tick_size + 5)

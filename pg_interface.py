@@ -51,6 +51,7 @@ def exception_catcher(func):
 model = None
 sliced_model = None
 col_cardinalities = None
+time_usage_dic = {}
 
 
 @exception_catcher
@@ -94,7 +95,7 @@ def model_inference_load_model(params: dict, args: Namespace):
 
 @exception_catcher
 def model_inference_compute(params: dict, args: Namespace):
-    global model, sliced_model, col_cardinalities
+    global model, sliced_model, col_cardinalities, time_usage_dic
     from model_selection.src.logger import logger
     try:
 
@@ -122,8 +123,6 @@ def model_inference_compute(params: dict, args: Namespace):
         time_usage_dic["compute"] = time.time() - begin
         logger.info(f"Prediction Results = {y.tolist()[:2]}...")
 
-        time_usage_dic["data_fetch"] = params['spi_seconds']
-
         logger.info("-----" * 10)
         overall_end = time.time()
         time_usage_dic["overall_duration"] = overall_end - overall_begin
@@ -140,7 +139,7 @@ def model_inference_compute(params: dict, args: Namespace):
 
 @exception_catcher
 def model_inference_compute_shared_memory(params: dict, args: Namespace):
-    global model, sliced_model, col_cardinalities
+    global model, sliced_model, col_cardinalities, time_usage_dic
     from model_selection.src.logger import logger
     try:
         mini_batch_shared = get_data_from_shared_memory()
@@ -170,8 +169,6 @@ def model_inference_compute_shared_memory(params: dict, args: Namespace):
         time_usage_dic["compute"] = time.time() - begin
         logger.info(f"Prediction Results = {y.tolist()[:2]}...")
 
-        time_usage_dic["data_fetch"] = params['spi_seconds']
-
         logger.info("-----" * 10)
         overall_end = time.time()
         time_usage_dic["overall_duration"] = overall_end - overall_begin
@@ -188,7 +185,7 @@ def model_inference_compute_shared_memory(params: dict, args: Namespace):
 
 @exception_catcher
 def model_inference_compute_shared_memory_write_once(params: dict, args: Namespace):
-    global model, sliced_model, col_cardinalities
+    global model, sliced_model, col_cardinalities, time_usage_dic
     from model_selection.src.logger import logger
     try:
         mini_batch_shared = get_data_from_shared_memory()
@@ -214,8 +211,6 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
         time_usage_dic["compute"] = time.time() - begin
         logger.info(f"Prediction Results = {y.tolist()[:2]}...")
 
-        time_usage_dic["data_fetch"] = params['spi_seconds']
-
         logger.info("-----" * 10)
         overall_end = time.time()
         time_usage_dic["overall_duration"] = overall_end - overall_begin
@@ -230,6 +225,20 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')
 
 
+@exception_catcher
+def records_results(params: dict, args: Namespace):
+    global time_usage_dic
+    from model_selection.src.logger import logger
+    try:
+        params.pop("config_file")
+        params.update(time_usage_dic)
+        logger.info(f"final result = params")
+    except:
+        logger.info(orjson.dumps(
+            {"Errored": traceback.format_exc()}).decode('utf-8'))
+    return orjson.dumps({"Done": 1}).decode('utf-8')
+
+
 def get_data_from_shared_memory(shmem_name="my_shmem"):
     # Open existing shared memory segment
     shm = shared_memory.SharedMemory(name="my_shared_memory")
@@ -238,4 +247,3 @@ def get_data_from_shared_memory(shmem_name="my_shmem"):
     # Close
     shm.close()
     return data.rstrip('\x00')
-

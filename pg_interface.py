@@ -96,6 +96,7 @@ def model_inference_load_model(params: dict, args: Namespace):
 def model_inference_compute(params: dict, args: Namespace):
     global model, sliced_model, col_cardinalities
     from model_selection.src.logger import logger
+    overall_begin = time.time()
     mini_batch = json.loads(params["mini_batch"])
     logger.info("-----"*10)
 
@@ -105,10 +106,12 @@ def model_inference_compute(params: dict, args: Namespace):
     if mini_batch["status"] != 'success':
         raise Exception
 
+    begin = time.time()
     # pre-processing mini_batch
     transformed_data = torch.LongTensor([
         [int(item.split(':')[0]) for item in sublist[2:]]
         for sublist in mini_batch["data"]])
+    time_usage_dic["conver_to_tensor"] = time.time() - begin
 
     logger.info(f"transformed data size: {len(transformed_data)}")
 
@@ -121,4 +124,9 @@ def model_inference_compute(params: dict, args: Namespace):
 
     logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     logger.info("-----" * 10)
+    overall_end = time.time()
+    time_usage_dic["overall_duration"] = overall_end - overall_begin
+    time_usage_dic["diff"] = time_usage_dic["overall_duration"] - \
+                             (time_usage_dic["conver_to_tensor"] + time_usage_dic["compute"])
+
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')

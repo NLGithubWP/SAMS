@@ -42,79 +42,111 @@ def scale_to_ms(latencies):
 
 # here run 10k rows for inference.,
 # each sub-list is "compute time" and "data fetch time"
+
+# Collecting data for plotting
 datasets_result = {
     'Frappe': {
         'In-Db-opt':
-            {'python_compute_time': 4.490436555, 'overall_query_latency': 6.706514911,
-             'data_query_time_spi': 0.107068849, 'data_query_time': 2.207659889, 'diff': -0.0003570320000010341,
-             'model_init_time': 0.008061435, 'mem_allocate_time': 0.000264492, 'py_conver_to_tensor': 1.836038589477539,
-             'py_compute': 1.5662827491760254, 'py_overall_duration': 4.0564281940460205, 'py_diff': 0.654106855392456},
+            {'data_query_time_spi': 0.012790853, 'python_compute_time': 0.520475877,
+             'overall_query_latency': 0.748851507, 'data_query_time': 0.221231879, 'diff': -0.00030915300000000645,
+             'model_init_time': 0.006834598, 'mem_allocate_time': 0.000235295,
+             'py_conver_to_tensor': 0.24206132888793945, 'py_compute': 0.12624335289001465,
+             'py_overall_duration': 0.46413350105285645, 'py_diff': 0.045828819274902344},
 
         'out-DB-cpu':
             {'data_query_time': 0.11190366744995117, 'py_conver_to_tensor': 0.22279024124145508,
-             'tensor_to_gpu': 0.00026679039001464844, 'py_compute': 0.19605422019958496,
+             'tensor_to_gpu': 0.00026679039001464844, 'py_compute': 0.12605422019958496,
              'overall_query_latency': 0.6827912330627441},
         'out-DB-gpu':
-            {'data_query_time': 0.1084756851196289, 'py_conver_to_tensor': 0.2222592830657959,
-             'tensor_to_gpu': 19.72794461250305, 'py_compute': 0.05002403259277344,
-             'overall_query_latency': 20.324212551116943},
+            {'data_query_time': 0.1079864501953125, 'py_conver_to_tensor': 0.2427043914794922,
+             'tensor_to_gpu': 19.78896689414978, 'py_compute': 0.059970855712890625,
+             'overall_query_latency': 20.467687845230103},
     },
 
     'Adult': {
-        'In-Db-opt': {},
-        'out-DB-gpu': {'data_query_time': 0.10367798805236816, 'py_conver_to_tensor': 0.2796957492828369, 'tensor_to_gpu': 9.942054748535156e-05, 'py_compute': 0.18311119079589844, 'overall_query_latency': 0.6310579776763916},
-        'out-DB-cpu': {},
+        'In-Db-opt': {'overall_query_latency': 0.920471622, 'diff': -0.0004153080000000031,
+                      'data_query_time_spi': 0.014744383, 'mem_allocate_time': 0.000303075,
+                      'python_compute_time': 0.55004726, 'model_init_time': 0.008975202, 'data_query_time': 0.361033852,
+                      'py_conver_to_tensor': 0.2757132053375244, 'py_compute': 0.18352606201171875,
+                      'py_overall_duration': 0.4639158248901367, 'py_diff': 0.0929419994354248},
+        'out-DB-cpu': {'data_query_time': 0.10367798805236816, 'py_conver_to_tensor': 0.2796957492828369,
+                       'tensor_to_gpu': 9.942054748535156e-05, 'py_compute': 0.18311119079589844,
+                       'overall_query_latency': 0.6310579776763916},
+        'out-DB-gpu': {'data_query_time': 0.09808635711669922, 'py_conver_to_tensor': 0.27641721725463867,
+                       'tensor_to_gpu': 11.821438789367676, 'py_compute': 0.011312007904052734,
+                       'overall_query_latency': 12.34174108505249},
     },
 
     'Cvd': {
-        'In-Db-opt': {},
-        'out-DB-gpu': {},
-        'out-DB-cpu': {},
+        'In-Db-opt': {'python_compute_time': 0.794361108, 'model_init_time': 0.008119253,
+                      'overall_query_latency': 1.122600982, 'data_query_time_spi': 0.012937076,
+                      'diff': -0.0003322129999998591, 'data_query_time': 0.319788408, 'mem_allocate_time': 0.000243092,
+                      'py_conver_to_tensor': 0.2250985336303711, 'py_compute': 0.21205615997314453,
+                      'py_overall_duration': 0.7133233547210693, 'py_diff': 0.04838967323303223},
+
+
+
+        'out-DB-cpu': {'data_query_time': 0.11284756660461426, 'py_conver_to_tensor': 0.2251596450805664,
+                       'tensor_to_gpu': 0.00022149085998535156, 'py_compute': 0.21241354942321777,
+                       'overall_query_latency': 0.6715552806854248},
+        'out-DB-gpu': {'data_query_time': 0.1045682430267334, 'py_conver_to_tensor': 0.2194075584411621,
+                       'tensor_to_gpu': 19.62585687637329, 'py_compute': 0.052184343338012695,
+                       'overall_query_latency': 20.205774307250977},
     },
 
     'Bank': {
-        'In-Db-opt': {},
-        'out-DB-gpu': {},
-        'out-DB-cpu': {},
+        'In-Db-opt': {'model_init_time': 0.008176494, 'python_compute_time': 0.683411322,
+                      'data_query_time_spi': 0.015905248, 'data_query_time': 0.29132877,
+                      'diff': -0.00032423100000000815, 'mem_allocate_time': 0.000232581,
+                      'overall_query_latency': 0.983240817, 'py_conver_to_tensor': 0.30087942123413086,
+                      'py_compute': 0.1244482707977295, 'py_overall_duration': 0.5877652168273926,
+                      'py_diff': 0.07243752479553223},
+        'out-DB-cpu': {'data_query_time': 0.14289021492004395, 'py_conver_to_tensor': 0.30756115913391113,
+                       'tensor_to_gpu': 0.0002760887145996094, 'py_compute': 0.11214518547058105,
+                       'overall_query_latency': 0.6774318218231201},
+        'out-DB-gpu': {'data_query_time': 0.1385364532470703, 'py_conver_to_tensor': 0.29821038246154785,
+                       'tensor_to_gpu': 20.349432706832886, 'py_compute': 0.045266151428222656,
+                       'overall_query_latency': 21.015833854675293},
     },
-
 }
 
-# Collecting data for plotting
 datasets = list(datasets_result.keys())
 
 # Plotting
 fig = plt.figure(figsize=(6.4, 4.5))
 
 # Create a broken y-axis within the fig
-ax = brokenaxes(ylims=((0, 6000), (22000, 24000)), hspace=.25, fig=fig, d=0)
+ax = brokenaxes(ylims=((0, 700), (12150, 12260), (19920, 20200), (20750, 21000)), hspace=.25, fig=fig, d=0)
 
-index = np.arange(len(datasets))
 # Initial flags to determine whether the labels have been set before
-set_label_outdb_gpu_data = True
-set_label_outdb_gpu_inference = True
-set_label_outdb_cpu_data = True
-set_label_outdb_cpu_inference = True
-set_label_indb_data = True
-set_label_indb_inference = True
+set_label_in_db_data_query = True
+set_label_in_db_data_copy_start_py = True
+set_label_in_db_data_preprocess = True
+set_label_in_db_data_compute = True
+set_label_in_db_data_others = True
 
+indices = []
+index = 0
 for dataset, valuedic in datasets_result.items():
+    indices.append(index)
+
     indb_med_opt = scale_to_ms(valuedic["In-Db-opt"])
     outgpudb_med = scale_to_ms(valuedic["out-DB-gpu"])
     outcpudb_med = scale_to_ms(valuedic["out-DB-cpu"])
 
-    label_in_db_data_query = 'Data Retrievl'
-    label_in_db_data_copy_start_py = 'Data Copy'
-    label_in_db_data_preprocess = 'Preprocess'
-    label_in_db_data_compute = 'Compute'
-    label_in_db_data_others = 'Others'
+    # set labesl
+    label_in_db_data_query = 'Data Retrievl' if set_label_in_db_data_query else None
+    label_in_db_data_copy_start_py = 'Data Copy' if set_label_in_db_data_copy_start_py else None
+    label_in_db_data_preprocess = 'Preprocess' if set_label_in_db_data_preprocess else None
+    label_in_db_data_compute = 'Compute' if set_label_in_db_data_compute else None
+    label_in_db_data_others = 'Others' if set_label_in_db_data_others else None
 
     # in-db with optimizization
     in_db_data_copy_start_py = 0
     in_db_data_query = indb_med_opt["data_query_time_spi"]
-    in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"] \
-                            + indb_med_opt["python_compute_time"] \
-                            - indb_med_opt["py_overall_duration"]
+    in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"]
+    # + indb_med_opt["python_compute_time"] \
+    # - indb_med_opt["py_overall_duration"]
     in_db_data_compute = indb_med_opt["py_compute"]
     in_db_data_others = indb_med_opt["overall_query_latency"] - \
                         indb_med_opt["data_query_time"] - \
@@ -191,12 +223,13 @@ for dataset, valuedic in datasets_result.items():
     #        edgecolor='black')
 
     # Update the flags to ensure the labels are not set again in the next iterations
-    set_label_outdb_gpu_data = False
-    set_label_outdb_gpu_inference = False
-    set_label_outdb_cpu_data = False
-    set_label_outdb_cpu_inference = False
-    set_label_indb_data = False
-    set_label_indb_inference = False
+    set_label_in_db_data_query = False
+    set_label_in_db_data_copy_start_py = False
+    set_label_in_db_data_preprocess = False
+    set_label_in_db_data_compute = False
+    set_label_in_db_data_others = False
+
+    index += 1
 
 ax.set_ylabel(".", fontsize=20, color='white')
 fig.text(-0.05, 0.5, 'Inference Time (ms)', va='center', rotation='vertical', fontsize=20)
@@ -204,10 +237,10 @@ fig.text(-0.05, 0.5, 'Inference Time (ms)', va='center', rotation='vertical', fo
 # ax.set_ylim(top=1600)
 
 for sub_ax in ax.axs:
-    sub_ax.set_xticks(index)
+    sub_ax.set_xticks(indices)
     sub_ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
 
-ax.legend(fontsize=set_lgend_size - 2, ncol=2)
+ax.legend(fontsize=set_lgend_size - 2, ncol=2, )
 
 # Since the yaxis formatter is tricky with brokenaxes, you might need to set it for the actual underlying axes:
 for ax1 in ax.axs:

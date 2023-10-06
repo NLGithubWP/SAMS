@@ -59,17 +59,18 @@ def scale_to_ms(latencies):
 # each sub-list is "compute time" and "data fetch time"
 datasets_result = {
     'Frappe': {
-        'In-Db-opt':
-            {'data_query_time': 0.303679895, 'diff': -0.00032395699999998584, 'model_init_time': 0.008430988,
-             'python_compute_time': 0.594773818, 'overall_query_latency': 0.907208658, 'mem_allocate_time': 0.000221926,
-             'py_conver_to_tensor': 0.31804752349853516, 'py_compute': 0.13548946380615234,
-             'py_overall_duration': 0.5120618343353271, 'py_diff': 0.05852484703063965},
-
         'In-Db':
-            {'data_query_time': 0.488198216, 'overall_query_latency': 1.273322381, 'diff': -7.211699999998267e-05,
-             'model_init_time': 0.008202746, 'python_compute_time': 0.776849302,
-             'py_conver_to_tensor': 0.31156349182128906, 'py_compute': 0.13396406173706055,
-             'py_overall_duration': 0.49233579635620117, 'py_diff': 0.04680824279785156},
+            {'diff': -9.421700000000754e-05, 'data_query_time_spi': 0.013217174, 'python_compute_time': 0.915429191,
+             'data_query_time': 0.463555978, 'overall_query_latency': 1.386377601, 'model_init_time': 0.007298215,
+             'py_conver_to_tensor': 0.3985600471496582, 'py_compute': 0.21648502349853516,
+             'py_overall_duration': 0.6852807998657227, 'py_diff': 0.0702357292175293},
+
+        'In-Db-opt':
+            {'mem_allocate_time': 0.000231685, 'model_init_time': 0.00682066, 'python_compute_time': 0.700091526,
+             'overall_query_latency': 1.007670266, 'data_query_time': 0.300435091, 'data_query_time_spi': 0.013407407,
+             'diff': -0.00032298900000005126, 'py_conver_to_tensor': 0.3608982563018799,
+             'py_compute': 0.19765901565551758, 'py_overall_duration': 0.6209824085235596,
+             'py_diff': 0.06242513656616211},
 
         'out-DB-cpu':
             {'data_query_time': 0.09861278533935547, 'py_conver_to_tensor': 0.28501272201538086,
@@ -124,12 +125,15 @@ for dataset, valuedic in datasets_result.items():
     outcpudb_med = scale_to_ms(valuedic["out-DB-cpu"])
 
     # in-db w/o optimize
-    in_db_data_query = indb_med["data_query_time"] + indb_med["python_compute_time"] - indb_med["py_overall_duration"]
+    # this is query_from_db + copy_to_python +  luanch_python_module
+    in_db_data_query = indb_med["data_query_time_spi"] + indb_med["python_compute_time"] - indb_med[
+        "py_overall_duration"]
     in_db_data_copy_start_py = 0
     in_db_data_preprocess = indb_med["py_conver_to_tensor"]
     in_db_data_compute = indb_med["py_compute"]
+    # here - indb_med["data_query_time"] remove the type cpnvert time
     in_db_data_others = indb_med["overall_query_latency"] - \
-                        in_db_data_query - \
+                        indb_med["data_query_time"] - \
                         in_db_data_copy_start_py - \
                         in_db_data_preprocess - \
                         in_db_data_compute
@@ -140,72 +144,72 @@ for dataset, valuedic in datasets_result.items():
     label_in_db_data_compute = 'Compute'
     label_in_db_data_others = 'Others'
 
-    ax.bar(index + 0.5*bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
+    ax.bar(index + 0.5 * bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
            label=label_in_db_data_query, edgecolor='black')
     # ax.bar(index + bar_width, in_db_data_copy_start_py, bar_width, color=colors[1], hatch=hatches[1],
     #        bottom=in_db_data_query,
     #        label=label_in_db_data_copy_start_py, edgecolor='black')
-    ax.bar(index + 0.5*bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
+    ax.bar(index + 0.5 * bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
            bottom=in_db_data_query + in_db_data_copy_start_py,
            label=label_in_db_data_preprocess, edgecolor='black')
-    ax.bar(index + 0.5*bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
+    ax.bar(index + 0.5 * bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
            bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess,
            label=label_in_db_data_compute, edgecolor='black')
-    ax.bar(index + 0.5*bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+    ax.bar(index + 0.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
            bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
            label=label_in_db_data_others, edgecolor='black')
 
     # in-db with optimizization
-    in_db_data_query = indb_med_opt["data_query_time"] + indb_med_opt["python_compute_time"] - indb_med_opt[
+    in_db_data_query = indb_med_opt["data_query_time_spi"] + indb_med_opt["python_compute_time"] - indb_med_opt[
         "py_overall_duration"]
     in_db_data_copy_start_py = 0
     in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"]
     in_db_data_compute = indb_med_opt["py_compute"]
     in_db_data_others = indb_med_opt["overall_query_latency"] - \
-                        in_db_data_query - \
+                        indb_med["data_query_time"] - \
                         in_db_data_copy_start_py - \
                         in_db_data_preprocess - \
                         in_db_data_compute
 
-    ax.bar(index+1.5*bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
+    ax.bar(index + 1.5 * bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
            edgecolor='black')
     # ax.bar(index, in_db_data_copy_start_py, bar_width, color=colors[1], hatch=hatches[1],
     #        bottom=in_db_data_query,
     #        edgecolor='black')
-    ax.bar(index+1.5*bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
+    ax.bar(index + 1.5 * bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
            bottom=in_db_data_query + in_db_data_copy_start_py,
            edgecolor='black')
-    ax.bar(index+1.5*bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
+    ax.bar(index + 1.5 * bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
            bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess,
            edgecolor='black')
-    ax.bar(index+1.5*bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+    ax.bar(index + 1.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
            bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
            edgecolor='black')
 
     # out-db GPU
     in_db_data_query = outgpudb_med["data_query_time"]
-    in_db_data_copy_gpu = outgpudb_med["tensor_to_gpu"] * 0
+    in_db_data_copy_gpu = outgpudb_med["tensor_to_gpu"]
     in_db_data_preprocess = outgpudb_med["py_conver_to_tensor"]
     in_db_data_compute = outgpudb_med["py_compute"]
     in_db_data_others = outgpudb_med["overall_query_latency"] - \
                         in_db_data_query - \
                         in_db_data_copy_gpu - \
                         in_db_data_preprocess - \
-                        in_db_data_compute - 18000
+                        in_db_data_compute
 
-    ax.bar(index-1.5*bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
+    ax.bar(index - 1.5 * bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
            edgecolor='black')
-    ax.bar(index-1.5*bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
+    ax.bar(index - 1.5 * bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
            bottom=in_db_data_query,
            edgecolor='black')
-    ax.bar(index-1.5*bar_width, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1],
+    ax.bar(index - 1.5 * bar_width, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1],
            bottom=in_db_data_query + in_db_data_preprocess,
            label=label_in_db_data_copy_start_py,
            edgecolor='black')
-    ax.bar(index-1.5*bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
+    ax.bar(index - 1.5 * bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
            bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
            edgecolor='black')
-    ax.bar(index-1.5*bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+    ax.bar(index - 1.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
            bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
            edgecolor='black')
 
@@ -220,18 +224,18 @@ for dataset, valuedic in datasets_result.items():
                         in_db_data_preprocess - \
                         in_db_data_compute
 
-    ax.bar(index-0.5*bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
+    ax.bar(index - 0.5 * bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
            edgecolor='black')
-    ax.bar(index-0.5*bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
+    ax.bar(index - 0.5 * bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
            bottom=in_db_data_query,
            edgecolor='black')
-    ax.bar(index-0.5*bar_width, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1],
+    ax.bar(index - 0.5 * bar_width, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1],
            bottom=in_db_data_query + in_db_data_preprocess,
            edgecolor='black')
-    ax.bar(index-0.5*bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
+    ax.bar(index - 0.5 * bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
            bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
            edgecolor='black')
-    ax.bar(index-0.5*bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+    ax.bar(index - 0.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
            bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
            edgecolor='black')
 

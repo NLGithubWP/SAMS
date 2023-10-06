@@ -28,7 +28,7 @@ opacity = 0.8
 set_font_size = 15  # Set the font size
 set_lgend_size = 12
 set_tick_size = 12
-colors = ['#729ECE', '#2ECC71', '#3498DB', '#F39C12', '#8E44AD', '#C0392B']
+colors = ['#729ECE', '#2ECC71', '#8E44AD', '#3498DB', '#F39C12']
 hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
 
 
@@ -135,8 +135,8 @@ for dataset, valuedic in datasets_result.items():
     # set labesl
     label_in_db_data_query = 'Data Retrievl' if set_label_in_db_data_query else None
     label_in_db_data_copy_start_py = 'Data Copy' if set_label_in_db_data_copy_start_py else None
-    label_in_db_data_preprocess = 'Preprocess' if set_label_in_db_data_preprocess else None
-    label_in_db_data_compute = 'Compute' if set_label_in_db_data_compute else None
+    label_in_db_data_preprocess = 'Data Preprocess' if set_label_in_db_data_preprocess else None
+    label_in_db_data_compute = 'Model Inference' if set_label_in_db_data_compute else None
     label_in_db_data_others = 'Others' if set_label_in_db_data_others else None
 
     # in-db with optimizization
@@ -230,7 +230,7 @@ for dataset, valuedic in datasets_result.items():
     index += 1
 
 ax.set_ylabel(".", fontsize=20, color='white')
-fig.text(-0.05, 0.5, 'Inference Time (ms)', va='center', rotation='vertical', fontsize=20)
+fig.text(-0.05, 0.5, 'End-to-end Time (ms)', va='center', rotation='vertical', fontsize=20)
 
 # ax.set_ylim(top=1600)
 

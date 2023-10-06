@@ -28,7 +28,7 @@ opacity = 0.8
 set_font_size = 15  # Set the font size
 set_lgend_size = 12
 set_tick_size = 12
-colors = ['#729ECE', '#2ECC71', '#3498DB', '#F39C12', '#8E44AD', '#C0392B']
+colors = ['#729ECE', '#2ECC71', '#8E44AD', '#3498DB', '#F39C12']
 hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
 
 
@@ -129,8 +129,8 @@ for dataset, valuedic in datasets_result.items():
 
     label_in_db_data_query = 'Data Retrievl'
     label_in_db_data_copy_start_py = 'Data Copy'
-    label_in_db_data_preprocess = 'Preprocess'
-    label_in_db_data_compute = 'Compute'
+    label_in_db_data_preprocess = 'Data Preprocess'
+    label_in_db_data_compute = 'Model Inference'
     label_in_db_data_others = 'Others'
 
     ax.bar(index + 0.5 * bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
@@ -238,7 +238,7 @@ for dataset, valuedic in datasets_result.items():
     set_label_indb_inference = False
 
 ax.set_ylabel(".", fontsize=20, color='white')
-fig.text(-0.05, 0.5, 'Inference Time (ms)', va='center', rotation='vertical', fontsize=20)
+fig.text(-0.05, 0.5, 'End-to-end Time (ms)', va='center', rotation='vertical', fontsize=20)
 
 # ax.set_ylim(top=1600)
 

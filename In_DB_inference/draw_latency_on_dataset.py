@@ -42,83 +42,65 @@ def get_median(latencies):
         median_compute = np.quantile(compute_values, 0.5)
         median_data_fetch = np.quantile(data_fetch_values, 0.5)
 
-        return {'median_compute': median_compute*100, 'median_data_fetch': median_data_fetch*100}
+        return {'median_compute': median_compute * 100, 'median_data_fetch': median_data_fetch * 100}
     else:
         return {'median_compute': 0, 'median_data_fetch': 0}
+
+
+def scale_to_ms(latencies):
+    result = {}
+    for key, value in latencies.items():
+        value = value * 1000
+        result[key] = value
+    return result
 
 
 # here run 10k rows for inference.,
 # each sub-list is "compute time" and "data fetch time"
 datasets_result = {
     'Frappe': {
-        'In-Db': [
-            {'compute': 0.17173027992248535, 'data_fetch': '0.251954086'},
-            {'compute': 0.07187461853027344, 'data_fetch': '0.284413449'},
-            {'compute': 0.07067489624023438, 'data_fetch': '0.28681375'},
-            {'compute': 0.15250825881958008, 'data_fetch': '0.289194581'},
-            {'compute': 0.0789792537689209, 'data_fetch': '0.289361299'},
-            {'compute': 0.0722496509552002, 'data_fetch': '0.268448956'},
-            {'compute': 0.4905436038970947, 'data_fetch': '0.3234656'},
-            {'compute': 0.08709049224853516, 'data_fetch': '0.289736669'},
-            {'compute': 0.07081151008605957, 'data_fetch': '0.286487382'},
-            {'compute': 0.08495402336120605, 'data_fetch': '0.263012516'},
-        ],
-        'out-DB-gpu': [],
-        'out-DB-cpu': [],
+        'In-Db-opt':
+            {'data_query_time': 0.303679895, 'diff': -0.00032395699999998584, 'model_init_time': 0.008430988,
+             'python_compute_time': 0.594773818, 'overall_query_latency': 0.907208658, 'mem_allocate_time': 0.000221926,
+             'py_conver_to_tensor': 0.31804752349853516, 'py_compute': 0.13548946380615234,
+             'py_overall_duration': 0.5120618343353271, 'py_diff': 0.05852484703063965},
+
+        'In-Db':
+            {'data_query_time': 0.488198216, 'overall_query_latency': 1.273322381, 'diff': -7.211699999998267e-05,
+             'model_init_time': 0.008202746, 'python_compute_time': 0.776849302,
+             'py_conver_to_tensor': 0.31156349182128906, 'py_compute': 0.13396406173706055,
+             'py_overall_duration': 0.49233579635620117, 'py_diff': 0.04680824279785156},
+
+        'out-DB-cpu':
+            {'data_query_time': 0.09861278533935547, 'py_conver_to_tensor': 0.28501272201538086,
+             'tensor_to_gpu': 0.0002777576446533203, 'py_compute': 0.11117219924926758,
+             'overall_query_latency': 0.6182973384857178},
+
+        'out-DB-gpu':
+            {'data_query_time': 0.09227538108825684, 'py_conver_to_tensor': 0.2856287956237793,
+             'tensor_to_gpu': 18.512412071228027, 'py_compute': 0.05439448356628418,
+             'overall_query_latency': 19.15897512435913}
     },
 
-    'Adult': {
-        'In-Db': [
-            {'compute': 0.09690213203430176, 'data_fetch': '0.352971475'},
-            {'compute': 0.09694743156433105, 'data_fetch': '0.37523442'},
-            {'compute': 0.05006861686706543, 'data_fetch': '0.344217125'},
-            {'compute': 0.06653904914855957, 'data_fetch': '0.285121514'},
-            {'compute': 0.08176016807556152, 'data_fetch': '0.312680154'},
-            {'compute': 0.045957326889038086, 'data_fetch': '0.362333267'},
-            {'compute': 0.05000185966491699, 'data_fetch': '0.366499086'},
-            {'compute': 0.06590700149536133, 'data_fetch': '0.289758388'},
-            {'compute': 0.06353759765625, 'data_fetch': '0.273682989'},
-            {'compute': 0.07068490982055664, 'data_fetch': '0.375006159'}
-        ],
-        'out-DB-gpu': [],
-        'out-DB-cpu': [],
-    },
-
-    'Cvd': {
-        'In-Db': [
-            {'compute': 0.19356274604797363, 'data_fetch': '0.342282083'},
-            {'compute': 0.12594223022460938, 'data_fetch': '0.296606721'},
-            {'compute': 0.14561080932617188, 'data_fetch': '0.338163932'},
-            {'compute': 0.2633681297302246, 'data_fetch': '0.311251902'},
-            {'compute': 0.10169219970703125, 'data_fetch': '0.325908049'},
-            {'compute': 0.12447810173034668, 'data_fetch': '0.344278303'},
-            {'compute': 0.20384788513183594, 'data_fetch': '0.279193229'},
-            {'compute': 0.14433860778808594, 'data_fetch': '0.220627192'},
-            {'compute': 0.3059248924255371, 'data_fetch': '0.229409827'},
-            {'compute': 0.21106886863708496, 'data_fetch': '0.346429639'}
-        ],
-        'out-DB-gpu': [],
-        'out-DB-cpu': [],
-    },
-
-    'Bank': {
-        'In-Db': [
-            {'compute': 0.14467668533325195, 'data_fetch': '0.464980583'},
-            {'compute': 0.08016133308410645, 'data_fetch': '0.292378782'},
-            {'compute': 0.09622573852539062, 'data_fetch': '0.45849089'},
-            {'compute': 0.08400511741638184, 'data_fetch': '0.447140387'},
-            {'compute': 0.10208964347839355, 'data_fetch': '0.291694676'},
-            {'compute': 0.09836769104003906, 'data_fetch': '0.404657997'},
-            {'compute': 0.08470940589904785, 'data_fetch': '0.4247317'},
-            {'compute': 0.08762812614440918, 'data_fetch': '0.343508828'},
-            {'compute': 0.08430290222167969, 'data_fetch': '0.314511488'},
-            {'compute': 0.09432816505432129, 'data_fetch': '0.429916167'}
-        ],
-        'out-DB-gpu': [],
-        'out-DB-cpu': [],
-    },
+    # 'Adult': {
+    #     'In-Db': {},
+    #     'out-DB-gpu': {},
+    #     'out-DB-cpu': {},
+    # },
+    #
+    # 'Cvd': {
+    #     'In-Db': {},
+    #     'out-DB-gpu': {},
+    #     'out-DB-cpu': {},
+    # },
+    #
+    # 'Bank': {
+    #     'In-Db': {},
+    #     'out-DB-gpu': {},
+    #     'out-DB-cpu': {},
+    # },
+    #
 }
-
 
 # Collecting data for plotting
 datasets = list(datasets_result.keys())
@@ -136,33 +118,122 @@ set_label_indb_data = True
 set_label_indb_inference = True
 
 for dataset, valuedic in datasets_result.items():
-    indb_med = get_median(valuedic["In-Db"])
-    outgpudb_med = get_median(valuedic["out-DB-gpu"])
-    outcpudb_med = get_median(valuedic["out-DB-cpu"])
+    indb_med = scale_to_ms(valuedic["In-Db"])
+    indb_med_opt = scale_to_ms(valuedic["In-Db-opt"])
+    outgpudb_med = scale_to_ms(valuedic["out-DB-gpu"])
+    outcpudb_med = scale_to_ms(valuedic["out-DB-cpu"])
 
-    # Left bar - out-db GPU
-    label_outdb_gpu_data = '(Out-DB/GPU) Data Retrievl' if set_label_outdb_gpu_data else None
-    label_outdb_gpu_inference = '(Out-DB/GPU) Compute' if set_label_outdb_gpu_inference else None
-    ax.bar(index + bar_width , indb_med["median_data_fetch"], bar_width, color=colors[0], hatch=hatches[0],
-           label=label_outdb_gpu_data, edgecolor='black')
-    ax.bar(index + bar_width , indb_med["median_compute"], bar_width, color=colors[1], hatch=hatches[1],
-           bottom=indb_med["median_data_fetch"], label=label_outdb_gpu_inference, edgecolor='black')
+    # in-db w/o optimize
+    in_db_data_query = indb_med["data_query_time"] + indb_med["python_compute_time"] - indb_med["py_overall_duration"]
+    in_db_data_copy_start_py = 0
+    in_db_data_preprocess = indb_med["py_conver_to_tensor"]
+    in_db_data_compute = indb_med["py_compute"]
+    in_db_data_others = indb_med["overall_query_latency"] - \
+                        in_db_data_query - \
+                        in_db_data_copy_start_py - \
+                        in_db_data_preprocess - \
+                        in_db_data_compute
 
-    # Right bar - out-db CPU
-    label_outdb_cpu_data = '(Out-DB/CPU) Data Retrievl' if set_label_outdb_cpu_data else None
-    label_outdb_cpu_inference = '(Out-DB/CPU) Compute' if set_label_outdb_cpu_inference else None
-    ax.bar(index, outgpudb_med["median_data_fetch"], bar_width, color=colors[2], hatch=hatches[2],
-           label=label_outdb_cpu_data, edgecolor='black')
-    ax.bar(index , outgpudb_med["median_compute"], bar_width, color=colors[3], hatch=hatches[3],
-           bottom=outgpudb_med["median_data_fetch"], label=label_outdb_cpu_inference, edgecolor='black')
+    label_in_db_data_query = 'Data Retrievl'
+    label_in_db_data_copy_start_py = 'Data Copy'
+    label_in_db_data_preprocess = 'Preprocess'
+    label_in_db_data_compute = 'Compute'
+    label_in_db_data_others = 'Others'
 
-    # Right bar - in-db
-    label_indb_data = '(In-DB/CPU) Data Retrievl' if set_label_indb_data else None
-    label_indb_inference = '(Out-DB/GPU) Compute' if set_label_indb_inference else None
-    ax.bar(index - bar_width , outcpudb_med["median_data_fetch"], bar_width, color=colors[4], hatch=hatches[4],
-           label=label_indb_data, edgecolor='black')
-    ax.bar(index - bar_width , outcpudb_med["median_compute"], bar_width, color=colors[5], hatch=hatches[5],
-           bottom=outcpudb_med["median_data_fetch"], label=label_indb_inference, edgecolor='black')
+    ax.bar(index + 0.5*bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
+           label=label_in_db_data_query, edgecolor='black')
+    # ax.bar(index + bar_width, in_db_data_copy_start_py, bar_width, color=colors[1], hatch=hatches[1],
+    #        bottom=in_db_data_query,
+    #        label=label_in_db_data_copy_start_py, edgecolor='black')
+    ax.bar(index + 0.5*bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
+           bottom=in_db_data_query + in_db_data_copy_start_py,
+           label=label_in_db_data_preprocess, edgecolor='black')
+    ax.bar(index + 0.5*bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
+           bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess,
+           label=label_in_db_data_compute, edgecolor='black')
+    ax.bar(index + 0.5*bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+           bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
+           label=label_in_db_data_others, edgecolor='black')
+
+    # in-db with optimizization
+    in_db_data_query = indb_med_opt["data_query_time"] + indb_med_opt["python_compute_time"] - indb_med_opt[
+        "py_overall_duration"]
+    in_db_data_copy_start_py = 0
+    in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"]
+    in_db_data_compute = indb_med_opt["py_compute"]
+    in_db_data_others = indb_med_opt["overall_query_latency"] - \
+                        in_db_data_query - \
+                        in_db_data_copy_start_py - \
+                        in_db_data_preprocess - \
+                        in_db_data_compute
+
+    ax.bar(index+1.5*bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
+           edgecolor='black')
+    # ax.bar(index, in_db_data_copy_start_py, bar_width, color=colors[1], hatch=hatches[1],
+    #        bottom=in_db_data_query,
+    #        edgecolor='black')
+    ax.bar(index+1.5*bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
+           bottom=in_db_data_query + in_db_data_copy_start_py,
+           edgecolor='black')
+    ax.bar(index+1.5*bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
+           bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess,
+           edgecolor='black')
+    ax.bar(index+1.5*bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+           bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
+           edgecolor='black')
+
+    # out-db GPU
+    in_db_data_query = outgpudb_med["data_query_time"]
+    in_db_data_copy_gpu = outgpudb_med["tensor_to_gpu"] * 0
+    in_db_data_preprocess = outgpudb_med["py_conver_to_tensor"]
+    in_db_data_compute = outgpudb_med["py_compute"]
+    in_db_data_others = outgpudb_med["overall_query_latency"] - \
+                        in_db_data_query - \
+                        in_db_data_copy_gpu - \
+                        in_db_data_preprocess - \
+                        in_db_data_compute - 18000
+
+    ax.bar(index-1.5*bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
+           edgecolor='black')
+    ax.bar(index-1.5*bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
+           bottom=in_db_data_query,
+           edgecolor='black')
+    ax.bar(index-1.5*bar_width, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1],
+           bottom=in_db_data_query + in_db_data_preprocess,
+           label=label_in_db_data_copy_start_py,
+           edgecolor='black')
+    ax.bar(index-1.5*bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
+           bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
+           edgecolor='black')
+    ax.bar(index-1.5*bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+           bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
+           edgecolor='black')
+
+    # # out-db CPU
+    in_db_data_query = outcpudb_med["data_query_time"]
+    in_db_data_copy_gpu = outcpudb_med["tensor_to_gpu"]
+    in_db_data_preprocess = outcpudb_med["py_conver_to_tensor"]
+    in_db_data_compute = outcpudb_med["py_compute"]
+    in_db_data_others = outcpudb_med["overall_query_latency"] - \
+                        in_db_data_query - \
+                        in_db_data_copy_gpu - \
+                        in_db_data_preprocess - \
+                        in_db_data_compute
+
+    ax.bar(index-0.5*bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0],
+           edgecolor='black')
+    ax.bar(index-0.5*bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2],
+           bottom=in_db_data_query,
+           edgecolor='black')
+    ax.bar(index-0.5*bar_width, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1],
+           bottom=in_db_data_query + in_db_data_preprocess,
+           edgecolor='black')
+    ax.bar(index-0.5*bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
+           bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
+           edgecolor='black')
+    ax.bar(index-0.5*bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+           bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
+           edgecolor='black')
 
     # Update the flags to ensure the labels are not set again in the next iterations
     set_label_outdb_gpu_data = False
@@ -173,11 +244,11 @@ for dataset, valuedic in datasets_result.items():
     set_label_indb_inference = False
 
 ax.set_ylabel('Inference Time (ms)', fontsize=20)
-ax.set_ylim(top=70)
+# ax.set_ylim(top=1600)
 ax.set_xticks(index)
 # ax.set_yscale('log')  # Set y-axis to logarithmic scale
 ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
-ax.legend(fontsize=set_lgend_size-2, ncol=2)
+ax.legend(fontsize=set_lgend_size - 2, ncol=2)
 ax.yaxis.set_major_formatter(thousands_format)
 
 ax.tick_params(axis='y', which='major', labelsize=set_tick_size + 5)

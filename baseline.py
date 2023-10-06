@@ -11,9 +11,10 @@ from fvcore.nn import FlopCountAnalysis
 from fvcore.nn import parameter_count_table
 
 USER = "postgres"
-HOST = "127.0.0.1"
+HOST = "panda17"
 PORT = "28814"
 DB_NAME = "pg_extension"
+PASSWOD = "1234"
 
 time_dict = {
     "data_query_time": 0,
@@ -48,9 +49,7 @@ def decode_libsvm(columns):
     map_func = lambda pair: (int(pair[0]), float(pair[1]))
     # 0 is id, 1 is label
     id, value = zip(*map(lambda col: map_func(col.split(':')), columns[2:]))
-    sample = {'id': list(id),
-              'value': list(value),
-              'y': int(columns[1])}
+    sample = {'id': list(id)}
     return sample
 
 
@@ -67,23 +66,18 @@ def pre_processing(mini_batch_data: List[Tuple]):
         row_value = mini_batch_data[i]
         sample = decode_libsvm(row_value)
         feat_id.append(sample['id'])
-        feat_value.append(sample['value'])
-        y.append(sample['y'])
     feat_id = torch.LongTensor(feat_id)
-    value_tensor = torch.FloatTensor(feat_value)
-    y_tensor = torch.FloatTensor(y)
-    return {'id': feat_id, 'value': value_tensor, 'y': y_tensor}
+    return {'id': feat_id}
 
 
 def fetch_data(database, batch_size):
     global time_dict
     print("Data fetching ....")
     begin_time = time.time()
-    with psycopg2.connect(database=DB_NAME, user=USER, host=HOST, port=PORT) as conn:
+    with psycopg2.connect(database=DB_NAME, user=USER, host=HOST, port=PORT, password=PASSWOD) as conn:
         rows = fetch_and_preprocess(conn, batch_size, database)
-    end_time = time.time()
-    time_dict["data_query_time"] += end_time - begin_time
-    print(f"Data fetching done {rows[0]}")
+    time_dict["data_query_time"] += time.time() - begin_time
+    print(f"Data fetching done {rows[0]}, size = {len(rows)}")
 
     print("Data preprocessing ....")
     begin_time = time.time()
@@ -160,6 +154,7 @@ if __name__ == '__main__':
 
     print(config.workload)
 
+    overall_query_latency = time.time()
     if config.net == "sparsemax_vertical_sams":
         alpha = net.sparsemax.alpha
         print(alpha)
@@ -186,19 +181,17 @@ if __name__ == '__main__':
             print("Copy to device")
             # wait for moving data to GPU
             begin = time.time()
-            target = data_batch['y'].to(device)
-            target_list.append(target)
             x_id = data_batch['id'].to(device)
-            B = target.shape[0]
             if if_cuda_avaiable(args.device):
                 torch.cuda.synchronize()
             time_dict["tensor_to_gpu"] += time.time() - begin
 
-            print("begin to compute")
+            print(f"begin to compute on {args.device}, is_cuda = {if_cuda_avaiable(args.device)}")
             # compute
             begin = time.time()
             y = subnet(x_id, None)
             if if_cuda_avaiable(args.device):
                 torch.cuda.synchronize()
             time_dict["py_compute"] += time.time() - begin
+    time_dict["overall_query_latency"] = time.time() - overall_query_latency
     print(time_dict)

@@ -96,7 +96,7 @@ datasets = list(datasets_result.keys())
 fig = plt.figure(figsize=(6.4, 4.5))
 
 # Create a broken y-axis within the fig
-ax = brokenaxes(ylims=((0, 800), (18800, 19000)), hspace=.25, fig=fig)
+ax = brokenaxes(ylims=((0, 800), (18800, 19000)), hspace=.25, fig=fig, d=0)
 
 index = np.arange(len(datasets))
 # Initial flags to determine whether the labels have been set before

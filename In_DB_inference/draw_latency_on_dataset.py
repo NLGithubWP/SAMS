@@ -96,7 +96,7 @@ datasets = list(datasets_result.keys())
 fig = plt.figure(figsize=(6.4, 4.5))
 
 # Create a broken y-axis within the fig
-ax = brokenaxes(ylims=((0, 1400), (18500, 19800)), hspace=.05, fig=fig)
+ax = brokenaxes(ylims=((0, 800), (18800, 19000)), hspace=.25, fig=fig)
 
 index = np.arange(len(datasets))
 # Initial flags to determine whether the labels have been set before
@@ -115,8 +115,9 @@ for dataset, valuedic in datasets_result.items():
 
     # in-db w/o optimize
     # this is query_from_db + copy_to_python +  luanch_python_module
-    in_db_data_query = indb_med["data_query_time_spi"] + indb_med["python_compute_time"] - indb_med[
-        "py_overall_duration"]
+    in_db_data_query = indb_med["data_query_time_spi"] + \
+                       indb_med["python_compute_time"] - \
+                       indb_med["py_overall_duration"]
     in_db_data_copy_start_py = 0
     in_db_data_preprocess = indb_med["py_conver_to_tensor"]
     in_db_data_compute = indb_med["py_compute"]
@@ -125,7 +126,8 @@ for dataset, valuedic in datasets_result.items():
                         indb_med["data_query_time"] - \
                         in_db_data_copy_start_py - \
                         in_db_data_preprocess - \
-                        in_db_data_compute
+                        in_db_data_compute - \
+                        indb_med["py_diff"] - indb_med["model_init_time"]
 
     label_in_db_data_query = 'Data Retrievl'
     label_in_db_data_copy_start_py = 'Data Copy'
@@ -144,9 +146,9 @@ for dataset, valuedic in datasets_result.items():
     ax.bar(index + 0.5 * bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
            bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess,
            label=label_in_db_data_compute, edgecolor='black')
-    ax.bar(index + 0.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
-           bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
-           label=label_in_db_data_others, edgecolor='black')
+    # ax.bar(index + 0.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+    #        bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
+    #        label=label_in_db_data_others, edgecolor='black')
 
     # in-db with optimizization
     in_db_data_query = indb_med_opt["data_query_time_spi"] + indb_med_opt["python_compute_time"] - indb_med_opt[
@@ -171,9 +173,9 @@ for dataset, valuedic in datasets_result.items():
     ax.bar(index + 1.5 * bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
            bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess,
            edgecolor='black')
-    ax.bar(index + 1.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
-           bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
-           edgecolor='black')
+    # ax.bar(index + 1.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+    #        bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
+    #        edgecolor='black')
 
     # out-db GPU
     in_db_data_query = outgpudb_med["data_query_time"]
@@ -198,9 +200,9 @@ for dataset, valuedic in datasets_result.items():
     ax.bar(index - 1.5 * bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
            bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
            edgecolor='black')
-    ax.bar(index - 1.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
-           bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
-           edgecolor='black')
+    # ax.bar(index - 1.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+    #        bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
+    #        edgecolor='black')
 
     # # out-db CPU
     in_db_data_query = outcpudb_med["data_query_time"]
@@ -224,9 +226,9 @@ for dataset, valuedic in datasets_result.items():
     ax.bar(index - 0.5 * bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3],
            bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
            edgecolor='black')
-    ax.bar(index - 0.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
-           bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
-           edgecolor='black')
+    # ax.bar(index - 0.5 * bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4],
+    #        bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
+    #        edgecolor='black')
 
     # Update the flags to ensure the labels are not set again in the next iterations
     set_label_outdb_gpu_data = False
@@ -236,7 +238,9 @@ for dataset, valuedic in datasets_result.items():
     set_label_indb_data = False
     set_label_indb_inference = False
 
-ax.set_ylabel('Inference Time (ms)', fontsize=20)
+ax.set_ylabel(".", fontsize=20, color='white')
+fig.text(-0.05, 0.5, 'Inference Time (ms)', va='center', rotation='vertical', fontsize=20)
+
 # ax.set_ylim(top=1600)
 
 for sub_ax in ax.axs:
@@ -249,9 +253,8 @@ ax.legend(fontsize=set_lgend_size - 2, ncol=2)
 for ax1 in ax.axs:
     ax1.yaxis.set_major_formatter(thousands_format)
 
-# ax.yaxis.set_major_formatter(thousands_format)
-
 ax.tick_params(axis='y', which='major', labelsize=set_tick_size + 5)
+
 
 plt.tight_layout()
 fig.tight_layout()

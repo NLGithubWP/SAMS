@@ -28,7 +28,7 @@ opacity = 0.8
 set_font_size = 15  # Set the font size
 set_lgend_size = 12
 set_tick_size = 12
-colors = ['#729ECE', '#FFB579', '#E74C3C', '#2ECC71', '#3498DB', '#F39C12', '#8E44AD', '#C0392B']
+colors = ['#729ECE', '#2ECC71', '#3498DB', '#F39C12', '#8E44AD', '#C0392B']
 hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
 
 

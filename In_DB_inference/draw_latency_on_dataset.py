@@ -29,7 +29,6 @@ set_font_size = 15  # Set the font size
 set_lgend_size = 12
 set_tick_size = 12
 colors = ['#729ECE', '#FFB579', '#E74C3C', '#2ECC71', '#3498DB', '#F39C12', '#8E44AD', '#C0392B']
-
 hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
 
 
@@ -46,27 +45,26 @@ def scale_to_ms(latencies):
 datasets_result = {
     'Frappe': {
         'In-Db':
-            {'diff': -9.421700000000754e-05, 'data_query_time_spi': 0.013217174, 'python_compute_time': 0.915429191,
-             'data_query_time': 0.463555978, 'overall_query_latency': 1.386377601, 'model_init_time': 0.007298215,
-             'py_conver_to_tensor': 0.3985600471496582, 'py_compute': 0.11117219924926758,
-             'py_overall_duration': 0.6852807998657227, 'py_diff': 0.0702357292175293},
+            {'model_init_time': 0.007789646, 'data_query_time_spi': 0.115799835, 'data_query_time': 5.050895535,
+             'overall_query_latency': 11.061697293, 'python_compute_time': 6.002932697, 'diff': -7.941500000008261e-05,
+             'py_conver_to_tensor': 1.5937657356262207, 'py_compute': 1.6089363956451416,
+             'py_overall_duration': 3.496934652328491, 'py_diff': 0.6342325210571289},
 
         'In-Db-opt':
-            {'mem_allocate_time': 0.000231685, 'model_init_time': 0.00682066, 'python_compute_time': 0.700091526,
-             'overall_query_latency': 1.007670266, 'data_query_time': 0.300435091, 'data_query_time_spi': 0.013407407,
-             'diff': -0.00032298900000005126, 'py_conver_to_tensor': 0.3608982563018799,
-             'py_compute': 0.12765901565551758, 'py_overall_duration': 0.6209824085235596,
-             'py_diff': 0.06242513656616211},
+            {'python_compute_time': 4.490436555, 'overall_query_latency': 6.706514911,
+             'data_query_time_spi': 0.107068849, 'data_query_time': 2.207659889, 'diff': -0.0003570320000010341,
+             'model_init_time': 0.008061435, 'mem_allocate_time': 0.000264492, 'py_conver_to_tensor': 1.836038589477539,
+             'py_compute': 1.5662827491760254, 'py_overall_duration': 4.0564281940460205, 'py_diff': 0.654106855392456},
 
         'out-DB-cpu':
-            {'data_query_time': 0.09861278533935547, 'py_conver_to_tensor': 0.28501272201538086,
-             'tensor_to_gpu': 0.0002777576446533203, 'py_compute': 0.11117219924926758,
-             'overall_query_latency': 0.6182973384857178},
+            {'data_query_time': 0.6817991733551025, 'py_conver_to_tensor': 2.835449457168579,
+             'tensor_to_gpu': 0.00025272369384765625, 'py_compute': 1.6024252700805664,
+             'overall_query_latency': 5.489258050918579},
 
         'out-DB-gpu':
-            {'data_query_time': 0.09227538108825684, 'py_conver_to_tensor': 0.2856287956237793,
-             'tensor_to_gpu': 18.512412071228027, 'py_compute': 0.05439448356628418,
-             'overall_query_latency': 19.15897512435913}
+            {'data_query_time': 0.6990134716033936, 'py_conver_to_tensor': 2.716031074523926,
+             'tensor_to_gpu': 19.514512062072754, 'py_compute': 0.1083493709564209,
+             'overall_query_latency': 23.310205221176147},
     },
 
     # 'Adult': {
@@ -96,7 +94,7 @@ datasets = list(datasets_result.keys())
 fig = plt.figure(figsize=(6.4, 4.5))
 
 # Create a broken y-axis within the fig
-ax = brokenaxes(ylims=((0, 800), (18800, 19000)), hspace=.25, fig=fig, d=0)
+ax = brokenaxes(ylims=((0, 6000), (22000, 24000)), hspace=.25, fig=fig, d=0)
 
 index = np.arange(len(datasets))
 # Initial flags to determine whether the labels have been set before
@@ -115,11 +113,11 @@ for dataset, valuedic in datasets_result.items():
 
     # in-db w/o optimize
     # this is query_from_db + copy_to_python +  luanch_python_module
-    in_db_data_query = indb_med["data_query_time_spi"] + \
-                       indb_med["python_compute_time"] - \
-                       indb_med["py_overall_duration"]
+    in_db_data_query = indb_med["data_query_time_spi"]
     in_db_data_copy_start_py = 0
-    in_db_data_preprocess = indb_med["py_conver_to_tensor"]
+    in_db_data_preprocess = indb_med["py_conver_to_tensor"] + \
+                            indb_med["python_compute_time"] - \
+                            indb_med["py_overall_duration"]
     in_db_data_compute = indb_med["py_compute"]
     # here - indb_med["data_query_time"] remove the type cpnvert time
     in_db_data_others = indb_med["overall_query_latency"] - \
@@ -151,10 +149,11 @@ for dataset, valuedic in datasets_result.items():
     #        label=label_in_db_data_others, edgecolor='black')
 
     # in-db with optimizization
-    in_db_data_query = indb_med_opt["data_query_time_spi"] + indb_med_opt["python_compute_time"] - indb_med_opt[
-        "py_overall_duration"]
     in_db_data_copy_start_py = 0
-    in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"]
+    in_db_data_query = indb_med_opt["data_query_time_spi"]
+    in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"] \
+                            + indb_med_opt["python_compute_time"] \
+                            - indb_med_opt["py_overall_duration"]
     in_db_data_compute = indb_med_opt["py_compute"]
     in_db_data_others = indb_med_opt["overall_query_latency"] - \
                         indb_med_opt["data_query_time"] - \
@@ -254,7 +253,6 @@ for ax1 in ax.axs:
     ax1.yaxis.set_major_formatter(thousands_format)
 
 ax.tick_params(axis='y', which='major', labelsize=set_tick_size + 5)
-
 
 plt.tight_layout()
 fig.tight_layout()

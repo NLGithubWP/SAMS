@@ -8,6 +8,7 @@ from argparse import Namespace
 from model_selection.shared_config import parse_config_arguments
 from multiprocessing import shared_memory
 import torch
+from typing import Any, List, Dict, Tuple
 
 
 def read_json(file_name):
@@ -127,7 +128,7 @@ def model_inference_compute(params: dict, args: Namespace):
         overall_end = time.time()
         time_usage_dic["py_overall_duration"] = overall_end - overall_begin
         time_usage_dic["py_diff"] = time_usage_dic["py_overall_duration"] - \
-                                 (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
+                                    (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
 
         logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     except:
@@ -173,7 +174,7 @@ def model_inference_compute_shared_memory(params: dict, args: Namespace):
         overall_end = time.time()
         time_usage_dic["py_overall_duration"] = overall_end - overall_begin
         time_usage_dic["py_diff"] = time_usage_dic["py_overall_duration"] - \
-                                 (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
+                                    (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
 
         logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     except:
@@ -181,6 +182,30 @@ def model_inference_compute_shared_memory(params: dict, args: Namespace):
             {"Errored": traceback.format_exc()}).decode('utf-8'))
 
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')
+
+
+def decode_libsvm(columns):
+    map_func = lambda pair: (int(pair[0]), float(pair[1]))
+    # 0 is id, 1 is label
+    id, value = zip(*map(lambda col: map_func(col.split(':')), columns[2:]))
+    sample = {'id': list(id)}
+    return sample
+
+
+def pre_processing(mini_batch_data: List[Tuple]):
+    """
+    mini_batch_data: [('0', '0', '123:123', '123:123', '123:123',)
+    """
+    sample_lines = len(mini_batch_data)
+    feat_id = []
+    feat_value = []
+    y = []
+    for i in range(sample_lines):
+        row_value = mini_batch_data[i]
+        sample = decode_libsvm(row_value)
+        feat_id.append(sample['id'])
+    feat_id = torch.LongTensor(feat_id)
+    return {'id': feat_id}
 
 
 @exception_catcher
@@ -199,11 +224,8 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
 
         begin = time.time()
         # pre-processing mini_batch
-        transformed_data = torch.LongTensor([
-            [int(item.split(':')[0]) for item in sublist[2:]]
-            for sublist in mini_batch])
+        transformed_data = pre_processing(mini_batch)['id']
         time_usage_dic["py_conver_to_tensor"] = time.time() - begin
-
         logger.info(f"transformed data size: {len(transformed_data)}")
 
         begin = time.time()
@@ -215,7 +237,7 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
         overall_end = time.time()
         time_usage_dic["py_overall_duration"] = overall_end - overall_begin
         time_usage_dic["py_diff"] = time_usage_dic["py_overall_duration"] - \
-                                 (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
+                                    (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
 
         logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
     except:

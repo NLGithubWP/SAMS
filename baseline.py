@@ -146,7 +146,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     path = args.path
     flag = args.flag
-    device = args.device
+    device = torch.device(args.device)
     print(path)
     net, config = load_model(path, args.device)
     net: SparseMax_VerticalSAMS = net

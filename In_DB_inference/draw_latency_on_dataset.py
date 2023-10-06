@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
 from matplotlib.ticker import FuncFormatter
+from brokenaxes import brokenaxes
 
 
 def thousands_formatter(x, pos):
@@ -32,21 +33,6 @@ colors = ['#729ECE', '#FFB579', '#E74C3C', '#2ECC71', '#3498DB', '#F39C12', '#8E
 hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
 
 
-# hatches = ['', '', '', '', '']
-
-def get_median(latencies):
-    if len(latencies) > 0:
-        compute_values = [entry['compute'] for entry in latencies]
-        data_fetch_values = [float(entry['data_fetch']) for entry in latencies]
-
-        median_compute = np.quantile(compute_values, 0.5)
-        median_data_fetch = np.quantile(data_fetch_values, 0.5)
-
-        return {'median_compute': median_compute * 100, 'median_data_fetch': median_data_fetch * 100}
-    else:
-        return {'median_compute': 0, 'median_data_fetch': 0}
-
-
 def scale_to_ms(latencies):
     result = {}
     for key, value in latencies.items():
@@ -62,14 +48,14 @@ datasets_result = {
         'In-Db':
             {'diff': -9.421700000000754e-05, 'data_query_time_spi': 0.013217174, 'python_compute_time': 0.915429191,
              'data_query_time': 0.463555978, 'overall_query_latency': 1.386377601, 'model_init_time': 0.007298215,
-             'py_conver_to_tensor': 0.3985600471496582, 'py_compute': 0.21648502349853516,
+             'py_conver_to_tensor': 0.3985600471496582, 'py_compute': 0.11117219924926758,
              'py_overall_duration': 0.6852807998657227, 'py_diff': 0.0702357292175293},
 
         'In-Db-opt':
             {'mem_allocate_time': 0.000231685, 'model_init_time': 0.00682066, 'python_compute_time': 0.700091526,
              'overall_query_latency': 1.007670266, 'data_query_time': 0.300435091, 'data_query_time_spi': 0.013407407,
              'diff': -0.00032298900000005126, 'py_conver_to_tensor': 0.3608982563018799,
-             'py_compute': 0.19765901565551758, 'py_overall_duration': 0.6209824085235596,
+             'py_compute': 0.12765901565551758, 'py_overall_duration': 0.6209824085235596,
              'py_diff': 0.06242513656616211},
 
         'out-DB-cpu':
@@ -107,7 +93,10 @@ datasets_result = {
 datasets = list(datasets_result.keys())
 
 # Plotting
-fig, ax = plt.subplots(figsize=(6.4, 4.5))
+fig = plt.figure(figsize=(6.4, 4.5))
+
+# Create a broken y-axis within the fig
+ax = brokenaxes(ylims=((0, 1400), (18500, 19800)), hspace=.05, fig=fig)
 
 index = np.arange(len(datasets))
 # Initial flags to determine whether the labels have been set before
@@ -166,7 +155,7 @@ for dataset, valuedic in datasets_result.items():
     in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"]
     in_db_data_compute = indb_med_opt["py_compute"]
     in_db_data_others = indb_med_opt["overall_query_latency"] - \
-                        indb_med["data_query_time"] - \
+                        indb_med_opt["data_query_time"] - \
                         in_db_data_copy_start_py - \
                         in_db_data_preprocess - \
                         in_db_data_compute
@@ -249,11 +238,18 @@ for dataset, valuedic in datasets_result.items():
 
 ax.set_ylabel('Inference Time (ms)', fontsize=20)
 # ax.set_ylim(top=1600)
-ax.set_xticks(index)
-# ax.set_yscale('log')  # Set y-axis to logarithmic scale
-ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
+
+for sub_ax in ax.axs:
+    sub_ax.set_xticks(index)
+    sub_ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
+
 ax.legend(fontsize=set_lgend_size - 2, ncol=2)
-ax.yaxis.set_major_formatter(thousands_format)
+
+# Since the yaxis formatter is tricky with brokenaxes, you might need to set it for the actual underlying axes:
+for ax1 in ax.axs:
+    ax1.yaxis.set_major_formatter(thousands_format)
+
+# ax.yaxis.set_major_formatter(thousands_format)
 
 ax.tick_params(axis='y', which='major', labelsize=set_tick_size + 5)
 

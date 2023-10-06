@@ -139,6 +139,7 @@ parser.add_argument('--print_net', '--b', action='store_true',
 
 parser.add_argument('--device', type=str, default="cuda")
 parser.add_argument('--dataset', type=str, default="frappe")
+parser.add_argument('--target_batch', type=int, default=10000)
 parser.add_argument('--batch_size', type=int, default=10000)
 parser.add_argument('--col_cardinalities_file', type=str, default="path to the stored file")
 
@@ -175,7 +176,9 @@ if __name__ == '__main__':
         target_list, y_list = [], []
         ops = 0
 
-        for i in range(1):
+        # default batch to 1024
+        num_ite = args.target_batch // args.batch_size
+        for i in range(num_ite):
             # fetch from db
             data_batch = fetch_data(args.dataset, args.batch_size)
             print("Copy to device")

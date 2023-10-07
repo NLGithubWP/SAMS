@@ -127,7 +127,7 @@ for dataset, valuedic in datasets_result.items():
                         in_db_data_compute - \
                         indb_med["py_diff"] - indb_med["model_init_time"]
 
-    label_in_db_data_query = 'Data Retrievl'
+    label_in_db_data_query = 'Data Retrieval'
     label_in_db_data_copy_start_py = 'Data Copy'
     label_in_db_data_preprocess = 'Data Preprocess'
     label_in_db_data_compute = 'Model Inference'

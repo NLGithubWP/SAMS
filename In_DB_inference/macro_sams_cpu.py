@@ -141,9 +141,9 @@ for dataset, valuedic in datasets_result.items():
     # in-db with optimizization
     in_db_data_copy_start_py = 0
     in_db_data_query = indb_med_opt["data_query_time_spi"]
-    in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"] \
-                            + indb_med_opt["python_compute_time"] \
-                            - indb_med_opt["py_overall_duration"]
+    in_db_data_preprocess = indb_med_opt["py_conver_to_tensor"]
+                            # + indb_med_opt["python_compute_time"] \
+                            # - indb_med_opt["py_overall_duration"]
     in_db_data_compute = indb_med_opt["py_compute"]
     in_db_data_others = indb_med_opt["overall_query_latency"] - \
                         indb_med_opt["data_query_time"] - \

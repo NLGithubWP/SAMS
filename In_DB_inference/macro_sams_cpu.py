@@ -8,7 +8,7 @@ from brokenaxes import brokenaxes
 
 def thousands_formatter(x, pos):
     if x >= 1e3:
-        return '{:.1f}k'.format(x * 1e-3)
+        return '{:.0f}k'.format(x * 1e-3)
     else:
         return '{:.1f}'.format(x)
 

@@ -106,6 +106,13 @@ set_label_in_db_data_preprocess = True
 set_label_in_db_data_compute = True
 set_label_in_db_data_others = True
 
+
+baseline_sys_x_array = []
+baseline_sys_y_array = []
+
+sams_sys_x_array = []
+sams_sys_y_array = []
+
 indices = []
 index = 0
 for dataset, valuedic in frappe_datasets_result.items():
@@ -149,6 +156,10 @@ for dataset, valuedic in frappe_datasets_result.items():
     #        bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute,
     #        edgecolor='black')
 
+    sams_sys_x_array.append(index + bar_width / 2)
+    sams_sys_y_array.append(
+        in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute)
+
     # # out-db CPU
     in_db_data_query = outcpudb_med["data_query_time"]
     in_db_data_copy_gpu = outcpudb_med["tensor_to_gpu"]
@@ -175,6 +186,10 @@ for dataset, valuedic in frappe_datasets_result.items():
     #        bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
     #        edgecolor='black')
 
+    baseline_sys_x_array.append(index - bar_width / 2)
+    baseline_sys_y_array.append(
+        in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute)
+
     # Update the flags to ensure the labels are not set again in the next iterations
     set_label_in_db_data_query = False
     set_label_in_db_data_copy_start_py = False
@@ -184,17 +199,22 @@ for dataset, valuedic in frappe_datasets_result.items():
 
     index += 1
 
+
+ax.plot(sams_sys_x_array, sams_sys_y_array, color='red', marker='*', linewidth=2)  # 'o' will add a marker at each point
+ax.plot(baseline_sys_x_array, baseline_sys_y_array, color='green', marker='o',linewidth = 2)  # 'o' will add a marker at each point
+
+
 # legned etc
 ax.set_ylabel(".", fontsize=20, color='white')
 fig.text(0.01, 0.5, 'End-to-end Time (ms)', va='center', rotation='vertical', fontsize=20)
 
-ax.set_ylim(top=20000)
+ax.set_ylim(top=14400)
 
 ax.set_xticks(indices)
 ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
 
 # ax.legend(fontsize=set_lgend_size - 2, ncol=2, )
-ax.legend(fontsize=set_lgend_size, ncol=2, loc='upper left')
+ax.legend(fontsize=set_lgend_size, ncol=1, loc='upper left')
 
 # Since the yaxis formatter is tricky with brokenaxes, you might need to set it for the actual underlying axes:
 ax.yaxis.set_major_formatter(thousands_format)

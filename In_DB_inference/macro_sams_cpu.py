@@ -23,12 +23,12 @@ def load_data(filepath):
 
 
 # Set your plot parameters
-bar_width = 0.25
+bar_width = 0.35
 opacity = 0.8
 set_font_size = 15  # Set the font size
 set_lgend_size = 12
 set_tick_size = 12
-colors = ['#729ECE', '#2ECC71', '#8E44AD', '#3498DB', '#F39C12']
+colors = ['#729ECE','#8E44AD',  '#2ECC71',  '#3498DB','#F39C12']
 hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
 
 
@@ -132,7 +132,7 @@ for dataset, valuedic in datasets_result.items():
     outcpudb_med = scale_to_ms(valuedic["out-DB-cpu"])
 
     # set labesl
-    label_in_db_data_query = 'Data Retrievl' if set_label_in_db_data_query else None
+    label_in_db_data_query = 'Data Retrieval' if set_label_in_db_data_query else None
     label_in_db_data_copy_start_py = 'Data Copy' if set_label_in_db_data_copy_start_py else None
     label_in_db_data_preprocess = 'Data Preprocess' if set_label_in_db_data_preprocess else None
     label_in_db_data_compute = 'Model Inference' if set_label_in_db_data_compute else None
@@ -151,15 +151,15 @@ for dataset, valuedic in datasets_result.items():
                         in_db_data_preprocess - \
                         in_db_data_compute
 
-    ax.bar(index + bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0], zorder=2,
+    ax.bar(index + bar_width/2, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0], zorder=2,
            label=label_in_db_data_query, edgecolor='black')
     # ax.bar(index, in_db_data_copy_start_py, bar_width, color=colors[1], hatch=hatches[1], zorder = 2,
     #        bottom=in_db_data_query,
     #        edgecolor='black')
-    ax.bar(index + bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2], zorder=2,
+    ax.bar(index + bar_width/2, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2], zorder=2,
            bottom=in_db_data_query + in_db_data_copy_start_py,
            label=label_in_db_data_preprocess, edgecolor='black')
-    ax.bar(index + bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
+    ax.bar(index + bar_width/2, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
            bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess,
            label=label_in_db_data_compute, edgecolor='black')
     # ax.bar(index + bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4], zorder = 2,
@@ -167,28 +167,28 @@ for dataset, valuedic in datasets_result.items():
     #        edgecolor='black')
 
     # out-db GPU
-    in_db_data_query = outgpudb_med["data_query_time"]
-    in_db_data_copy_gpu = outgpudb_med["tensor_to_gpu"]
-    in_db_data_preprocess = outgpudb_med["py_conver_to_tensor"]
-    in_db_data_compute = outgpudb_med["py_compute"]
-    in_db_data_others = outgpudb_med["overall_query_latency"] - \
-                        in_db_data_query - \
-                        in_db_data_copy_gpu - \
-                        in_db_data_preprocess - \
-                        in_db_data_compute
-
-    ax.bar(index - bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0], zorder=2,
-           edgecolor='black')
-    ax.bar(index - bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2], zorder=2,
-           bottom=in_db_data_query,
-           edgecolor='black')
-    ax.bar(index - bar_width, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1], zorder=2,
-           bottom=in_db_data_query + in_db_data_preprocess,
-           label=label_in_db_data_copy_start_py,
-           edgecolor='black')
-    ax.bar(index - bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
-           bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
-           edgecolor='black')
+    # in_db_data_query = outgpudb_med["data_query_time"]
+    # in_db_data_copy_gpu = outgpudb_med["tensor_to_gpu"]
+    # in_db_data_preprocess = outgpudb_med["py_conver_to_tensor"]
+    # in_db_data_compute = outgpudb_med["py_compute"]
+    # in_db_data_others = outgpudb_med["overall_query_latency"] - \
+    #                     in_db_data_query - \
+    #                     in_db_data_copy_gpu - \
+    #                     in_db_data_preprocess - \
+    #                     in_db_data_compute
+    #
+    # ax.bar(index - bar_width, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0], zorder=2,
+    #        edgecolor='black')
+    # ax.bar(index - bar_width, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2], zorder=2,
+    #        bottom=in_db_data_query,
+    #        edgecolor='black')
+    # ax.bar(index - bar_width, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1], zorder=2,
+    #        bottom=in_db_data_query + in_db_data_preprocess,
+    #        label=label_in_db_data_copy_start_py,
+    #        edgecolor='black')
+    # ax.bar(index - bar_width, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
+    #        bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
+    #        edgecolor='black')
     # ax.bar(index -  bar_width, in_db_data_others, bar_width, color=colors[4], hatch=hatches[4], zorder = 2,
     #        bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
     #        edgecolor='black')
@@ -204,15 +204,15 @@ for dataset, valuedic in datasets_result.items():
                         in_db_data_preprocess - \
                         in_db_data_compute
 
-    ax.bar(index, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0], zorder=2,
+    ax.bar(index - bar_width/2, in_db_data_query, bar_width, color=colors[0], hatch=hatches[0], zorder=2,
            edgecolor='black')
-    ax.bar(index, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2], zorder=2,
+    ax.bar(index - bar_width/2, in_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2], zorder=2,
            bottom=in_db_data_query,
            edgecolor='black')
-    ax.bar(index, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1], zorder=2,
+    ax.bar(index - bar_width/2, in_db_data_copy_gpu, bar_width, color=colors[1], hatch=hatches[1], zorder=2,
            bottom=in_db_data_query + in_db_data_preprocess,
            edgecolor='black')
-    ax.bar(index, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
+    ax.bar(index - bar_width/2, in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
            bottom=in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess,
            edgecolor='black')
     # ax.bar(index , in_db_data_others, bar_width, color=colors[4], hatch=hatches[4], zorder = 2,
@@ -238,7 +238,7 @@ ax.set_xticks(indices)
 ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
 
 # ax.legend(fontsize=set_lgend_size - 2, ncol=2, )
-ax.legend(fontsize=set_lgend_size - 2, ncol=2, loc='upper left')
+ax.legend(fontsize=set_lgend_size, ncol=2, loc='upper left')
 
 # Since the yaxis formatter is tricky with brokenaxes, you might need to set it for the actual underlying axes:
 ax.yaxis.set_major_formatter(thousands_format)

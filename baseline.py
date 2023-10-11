@@ -149,9 +149,11 @@ if __name__ == '__main__':
     flag = args.flag
     device = torch.device(args.device)
     print(path)
+    load_time = time.time()
     net, config = load_model(path, args.device)
     net: SparseMax_VerticalSAMS = net
     config.workload = 'random'
+    time_dict["load_model"] = time.time() - load_time
 
     print(config.workload)
 

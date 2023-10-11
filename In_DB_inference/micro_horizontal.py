@@ -16,7 +16,7 @@ bar_width = 0.35
 set_font_size = 15
 set_lgend_size = 12
 set_tick_size = 12
-colors = ['#729ECE', '#8E44AD', '#2ECC71', '#F39C12', '#3498DB', '#E74C3C', '#2C3E50', '#27AE60', '#F1C40F', '#9B59B6']
+colors = ['#8E44AD','#729ECE',  '#F39C12', '#2ECC71',  '#3498DB', '#E74C3C', '#2C3E50', '#27AE60', '#F1C40F', '#9B59B6']
 hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
 
 

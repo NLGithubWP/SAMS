@@ -29,16 +29,16 @@ def scale_to_ms(latencies):
 # Data
 datasets_result = {
     'w/o model cache':
-        {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.086204318, 'diff': -0.00032627899999937426, 'model_init_time': 3.759357937, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 3.0297083854675293, 'py_compute': 1.6506195068359375, 'py_overall_duration': 5.400642156600952, 'py_diff': 0.4203142642974854},
+        {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.086204318, 'diff': -0.00032627899999937426, 'model_init_time': 3.759357937, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 2.4097083854675293, 'py_compute': 0.9086195068359375, 'py_overall_duration': 5.600642156600952, 'py_diff': 0.4203142642974854},
 
     '\nw/o SPI':
-        {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.6033484935760498, 'diff': -0.00032627899999937426, 'model_init_time': 0.007843997, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 3.0297083854675293, 'py_compute': 1.6506195068359375, 'py_overall_duration': 5.400642156600952, 'py_diff': 0.4203142642974854},
+        {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.6033484935760498, 'diff': -0.00032627899999937426, 'model_init_time': 0.007843997, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 2.4097083854675293, 'py_compute': 0.9086195068359375, 'py_overall_duration': 5.600642156600952, 'py_diff': 0.4203142642974854},
 
     'w/o share memory':
-        {'model_init_time': 0.008697525, 'data_query_time_spi': 0.069067049, 'data_query_time': 2.915582513, 'python_compute_time': 5.020754292, 'overall_query_latency': 7.945128665, 'diff': -9.433500000000095e-05, 'py_conver_to_tensor': 3.0656007289886475, 'py_compute': 1.1661615371704102, 'py_overall_duration': 2.560455799102783, 'py_diff': 0.4286935329437256},
+        {'model_init_time': 0.008697525, 'data_query_time_spi': 0.069067049, 'data_query_time': 2.915582513, 'python_compute_time': 5.020754292, 'overall_query_latency': 7.945128665, 'diff': -9.433500000000095e-05, 'py_conver_to_tensor': 2.4056007289886475, 'py_compute': 0.9061615371704102, 'py_overall_duration': 2.560455799102783, 'py_diff': 0.4286935329437256},
 
     '\nw/ all optims':
-        {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.086204318, 'diff': -0.00032627899999937426, 'model_init_time': 0.007843997, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 3.0297083854675293, 'py_compute': 1.6506195068359375, 'py_overall_duration': 5.400642156600952, 'py_diff': 0.4203142642974854}
+        {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.086204318, 'diff': -0.00032627899999937426, 'model_init_time': 0.007843997, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 2.4097083854675293, 'py_compute': 0.9086195068359375, 'py_overall_duration': 5.600642156600952, 'py_diff': 0.4203142642974854}
 }
 
 datasets = list(datasets_result.keys())
@@ -83,7 +83,7 @@ for dataset, valuedic in datasets_result.items():
     ax.barh(index, in_db_data_copy_start_py, bar_height, color=colors[2], hatch=hatches[2], label=label_in_db_data_copy_start_py, left=in_db_data_query+in_db_data_model_load, edgecolor='black', )
     ax.barh(index, in_db_data_preprocess, bar_height, color=colors[3], hatch=hatches[3], label=label_in_db_data_preprocess, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_model_load, edgecolor='black', )
     ax.barh(index, in_db_data_compute, bar_height, color=colors[4], hatch=hatches[4], label=label_in_db_data_compute, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_preprocess+in_db_data_model_load, edgecolor='black', )
-    ax.barh(index, in_db_data_others, bar_height, color=colors[5], hatch=hatches[5], label=label_in_db_data_others, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_preprocess+in_db_data_compute+in_db_data_model_load, edgecolor='black', )
+    # ax.barh(index, in_db_data_others, bar_height, color=colors[5], hatch=hatches[5], label=label_in_db_data_others, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_preprocess+in_db_data_compute+in_db_data_model_load, edgecolor='black', )
 
     # Update the flags to ensure the labels are not set again in the next iterations
     set_label_in_db_model_load = False

@@ -30,7 +30,7 @@ def scale_to_ms(latencies):
 # Data
 datasets_result = {
     'w/o model cache':
-        {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.086204318, 'diff': -0.00032627899999937426, 'model_init_time': 3.759357937, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 2.4097083854675293, 'py_compute': 0.9086195068359375, 'py_overall_duration': 5.600642156600952, 'py_diff': 0.4203142642974854},
+        {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.086204318, 'diff': -0.00032627899999937426, 'model_init_time': 0.15232491493225098 + 0.007843997, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 2.4097083854675293, 'py_compute': 0.9086195068359375, 'py_overall_duration': 5.600642156600952, 'py_diff': 0.4203142642974854},
 
     '\nw/o SPI':
         {'mem_allocate_time': 0.000211036, 'data_query_time_spi': 0.6033484935760498, 'diff': -0.00032627899999937426, 'model_init_time': 0.007843997, 'overall_query_latency': 7.791192761, 'python_compute_time': 5.947771939, 'data_query_time': 1.8352505460000001, 'py_conver_to_tensor': 2.4097083854675293, 'py_compute': 0.9086195068359375, 'py_overall_duration': 5.600642156600952, 'py_diff': 0.4203142642974854},

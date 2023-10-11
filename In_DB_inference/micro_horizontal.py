@@ -16,8 +16,9 @@ bar_width = 0.35
 set_font_size = 15
 set_lgend_size = 12
 set_tick_size = 12
-colors = ['#729ECE', '#8E44AD', '#2ECC71', '#3498DB', '#F39C12', '#E74C3C', '#2C3E50', '#27AE60', '#F1C40F', '#9B59B6']
+colors = ['#729ECE', '#8E44AD', '#2ECC71', '#F39C12', '#3498DB', '#E74C3C', '#2C3E50', '#27AE60', '#F1C40F', '#9B59B6']
 hatches = ['/', '\\', 'x', '.', '*', '//', '\\\\', 'xx', '..', '**']
+
 
 def scale_to_ms(latencies):
     result = {}
@@ -44,7 +45,7 @@ datasets_result = {
 datasets = list(datasets_result.keys())
 
 # Plotting
-fig, ax = plt.subplots(figsize=(12, 4))
+fig, ax = plt.subplots(figsize=(12, 3.8))
 
 # Initial flags to determine whether the labels have been set before
 set_label_in_db_model_load = True
@@ -54,13 +55,13 @@ set_label_in_db_data_preprocess = True
 set_label_in_db_data_compute = True
 set_label_in_db_data_others = True
 
-indices = np.arange(len(datasets))
+indices = []
 index = 0
-bar_height = 0.6
+bar_height = 0.35
 
 for dataset, valuedic in datasets_result.items():
     indb_med_opt = scale_to_ms(valuedic)
-
+    indices.append(index)
     # set labels
     label_in_db_model_load = 'Model Load' if set_label_in_db_model_load else None
     label_in_db_data_query = 'Data Retrieval' if set_label_in_db_data_query else None
@@ -93,10 +94,11 @@ for dataset, valuedic in datasets_result.items():
     set_label_in_db_data_compute = False
     set_label_in_db_data_others = False
 
-    index += 1
+    index += 0.6
+
 
 ax.set_yticks(indices)
-ax.set_yticklabels(datasets, fontsize=set_font_size)
+ax.set_yticklabels(datasets, fontsize=15)
 
 ax.xaxis.set_major_formatter(thousands_format)
 ax.tick_params(axis='x', which='major', labelsize=15)

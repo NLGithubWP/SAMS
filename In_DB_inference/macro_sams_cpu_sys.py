@@ -144,7 +144,7 @@ for dataset, valuedic in datasets_result.items():
                         in_db_data_preprocess - \
                         in_db_data_compute
 
-
+    T1 = in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute
     ax.bar(index - bar_width/2, in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute,
            bar_width, color=colors[2], hatch=hatches[2], zorder=2,
            label=label_baseline_system,
@@ -164,18 +164,21 @@ for dataset, valuedic in datasets_result.items():
                         in_db_data_preprocess - \
                         in_db_data_compute
 
+    T2 = in_db_data_query + in_db_data_copy_gpu + in_db_data_preprocess + in_db_data_compute
     ax.bar(index + bar_width/2, in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess+in_db_data_compute,
            bar_width, color=colors[1], hatch=hatches[1], zorder=2,
            label=label_our_system, edgecolor='black')
-
-
 
     # Update the flags to ensure the labels are not set again in the next iterations
     set_label_our_system = False
     set_label_baseline_system = False
 
-
     index += 1
+
+    print(dataset, T1 / T2)
+
+
+
 
 # legned etc
 ax.set_ylabel(".", fontsize=20, color='white')

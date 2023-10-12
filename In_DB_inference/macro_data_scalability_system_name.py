@@ -116,6 +116,7 @@ sams_sys_y_array = []
 indices = []
 index = 0
 for dataset, valuedic in frappe_datasets_result.items():
+    print(dataset)
     indices.append(index)
 
     indb_med_opt = scale_to_ms(valuedic["In-Db-opt"])
@@ -181,6 +182,17 @@ for dataset, valuedic in frappe_datasets_result.items():
 
 ax.plot(sams_sys_x_array, sams_sys_y_array, color='red', marker='*', linewidth=2)  # 'o' will add a marker at each point
 ax.plot(baseline_sys_x_array, baseline_sys_y_array, color='green', marker='o',linewidth = 2)  # 'o' will add a marker at each point
+
+# measure the speedups
+for i in range(len(sams_sys_x_array)):
+    t1 = sams_sys_y_array[i]
+    t2 = baseline_sys_y_array[i]
+    print("Speedups = ", t2/t1)
+
+for i in range(len(sams_sys_x_array)-1):
+    print("sams_increase = ", sams_sys_y_array[i+1]/sams_sys_y_array[i])
+    print("baseline_increasse = ", baseline_sys_y_array[i + 1] / baseline_sys_y_array[i])
+
 
 
 # legned etc

@@ -123,8 +123,8 @@ for dataset, valuedic in frappe_datasets_result.items():
     outcpudb_med = scale_to_ms(valuedic["out-DB-cpu"])
 
     # set labesl
-    label_baseline_sys = 'Baseline System' if set_label_baseline_sys else None
-    ouy_system = 'Our System' if set_ouy_system else None
+    label_baseline_sys = 'inDBNet (seperate)' if set_label_baseline_sys else None
+    ouy_system = 'inDBNet' if set_ouy_system else None
 
     # # out-db CPU
     in_db_data_query = outcpudb_med["data_query_time"]

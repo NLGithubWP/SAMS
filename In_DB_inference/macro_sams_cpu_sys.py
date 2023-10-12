@@ -130,8 +130,8 @@ for dataset, valuedic in datasets_result.items():
     outcpudb_med = scale_to_ms(valuedic["out-DB-cpu"])
 
     # set labesl
-    label_our_system = 'Our System' if set_label_our_system else None
-    label_baseline_system = 'Baseline System' if set_label_baseline_system else None
+    label_our_system = 'inDBNet' if set_label_our_system else None
+    label_baseline_system = 'inDBNet (seperate)' if set_label_baseline_system else None
 
     # # out-db CPU
     in_db_data_query = outcpudb_med["data_query_time"]

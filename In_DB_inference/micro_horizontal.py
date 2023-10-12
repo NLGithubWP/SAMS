@@ -116,7 +116,7 @@ ax.set_xlabel('End-to-end Time (ms)', fontsize=20)
 # ax.legend(fontsize=set_lgend_size, loc='upper left', ncol=5)
 ax.legend(fontsize=15,
           loc='center', ncol=6,
-          bbox_to_anchor=(0.2, 1.1))
+          bbox_to_anchor=(0.25, 1.1))
 
 # Grid and save the figure
 ax.xaxis.grid(True)

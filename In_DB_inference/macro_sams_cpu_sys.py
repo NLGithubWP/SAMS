@@ -190,7 +190,7 @@ ax.set_xticks(indices)
 ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)
 
 # ax.legend(fontsize=set_lgend_size - 2, ncol=2, )
-ax.legend(fontsize=set_lgend_size, ncol=2, loc='upper left')
+ax.legend(fontsize=15, ncol=2, loc='upper left')
 
 # Since the yaxis formatter is tricky with brokenaxes, you might need to set it for the actual underlying axes:
 ax.yaxis.set_major_formatter(thousands_format)

@@ -66,8 +66,8 @@ for dataset, valuedic in datasets_result.items():
     label_in_db_model_load = 'Model Loading' if set_label_in_db_model_load else None
     label_in_db_data_query = 'Data Retrieval' if set_label_in_db_data_query else None
     label_in_db_data_copy_start_py = 'Data Copy' if set_label_in_db_data_copy_start_py else None
-    label_in_db_data_preprocess = 'Data Preprocessing' if set_label_in_db_data_preprocess else None
-    label_in_db_data_compute = 'Inference' if set_label_in_db_data_compute else None
+    label_in_db_data_preprocess = 'Data Preprocessing & Inference' if set_label_in_db_data_preprocess else None
+    # label_in_db_data_compute = 'Inference' if set_label_in_db_data_compute else None
     label_in_db_data_others = 'Others' if set_label_in_db_data_others else None
 
     # in-db with optimization
@@ -83,7 +83,7 @@ for dataset, valuedic in datasets_result.items():
     ax.barh(index, in_db_data_query, bar_height, color=colors[1], hatch=hatches[1], label=label_in_db_data_query, left=in_db_data_model_load, edgecolor='black', )
     ax.barh(index, in_db_data_copy_start_py, bar_height, color=colors[2], hatch=hatches[2], label=label_in_db_data_copy_start_py, left=in_db_data_query+in_db_data_model_load, edgecolor='black', )
     ax.barh(index, in_db_data_preprocess, bar_height, color=colors[3], hatch=hatches[3], label=label_in_db_data_preprocess, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_model_load, edgecolor='black', )
-    ax.barh(index, in_db_data_compute, bar_height, color=colors[4], hatch=hatches[4], label=label_in_db_data_compute, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_preprocess+in_db_data_model_load, edgecolor='black', )
+    # ax.barh(index, in_db_data_compute, bar_height, color=colors[4], hatch=hatches[4], label=label_in_db_data_compute, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_preprocess+in_db_data_model_load, edgecolor='black', )
     # ax.barh(index, in_db_data_others, bar_height, color=colors[5], hatch=hatches[5], label=label_in_db_data_others, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_preprocess+in_db_data_compute+in_db_data_model_load, edgecolor='black', )
 
     # Update the flags to ensure the labels are not set again in the next iterations
@@ -106,7 +106,7 @@ ax.set_xlabel('End-to-end Time (ms)', fontsize=15)
 
 # Add legend
 # ax.legend(fontsize=set_lgend_size, loc='upper left', ncol=5)
-ax.legend(fontsize=set_lgend_size, loc='center', ncol=6, bbox_to_anchor=(0.4, 1.1))
+ax.legend(fontsize=set_lgend_size, loc='center', ncol=6, bbox_to_anchor=(0.5, 1.1))
 
 # Grid and save the figure
 ax.xaxis.grid(True)

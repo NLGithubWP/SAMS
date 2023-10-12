@@ -85,7 +85,7 @@ for dataset, valuedic in datasets_result.items():
     label_in_db_model_load = 'Model Loading' if set_label_in_db_model_load else None
     label_in_db_data_query = 'Data Retrieval' if set_label_in_db_data_query else None
     label_in_db_data_copy_start_py = 'Data Copy' if set_label_in_db_data_copy_start_py else None
-    label_in_db_data_preprocess = 'Data Preprocessing' if set_label_in_db_data_preprocess else None
+    label_in_db_data_preprocess = 'Data Preprocessing & Inference' if set_label_in_db_data_preprocess else None
     label_in_db_data_compute = 'Inference' if set_label_in_db_data_compute else None
     label_in_db_data_others = 'Others' if set_label_in_db_data_others else None
 
@@ -110,13 +110,13 @@ for dataset, valuedic in datasets_result.items():
            label = label_in_db_data_copy_start_py,
            edgecolor='black')
 
-    ax.bar(index, in_db_data_preprocess, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
+    ax.bar(index, in_db_data_preprocess + in_db_data_compute, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
            bottom=in_db_data_query + in_db_data_copy_start_py+in_db_data_model_load,
            label=label_in_db_data_preprocess, edgecolor='black')
 
-    ax.bar(index, in_db_data_compute, bar_width, color=colors[4], hatch=hatches[4], zorder=2,
-           bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess+in_db_data_model_load,
-           label=label_in_db_data_compute, edgecolor='black')
+    # ax.bar(index, in_db_data_compute, bar_width, color=colors[4], hatch=hatches[4], zorder=2,
+    #        bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess+in_db_data_model_load,
+    #        label=label_in_db_data_compute, edgecolor='black')
 
     ax.bar(index, in_db_data_others, bar_width, color=colors[5], hatch=hatches[5], zorder = 2,
            bottom=in_db_data_query + in_db_data_copy_start_py + in_db_data_preprocess + in_db_data_compute+in_db_data_model_load,

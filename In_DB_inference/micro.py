@@ -82,11 +82,11 @@ for dataset, valuedic in datasets_result.items():
     indb_med_opt = scale_to_ms(valuedic)
 
     # set labesl
-    label_in_db_model_load = 'Model Load' if set_label_in_db_model_load else None
+    label_in_db_model_load = 'Model Loading' if set_label_in_db_model_load else None
     label_in_db_data_query = 'Data Retrieval' if set_label_in_db_data_query else None
     label_in_db_data_copy_start_py = 'Data Copy' if set_label_in_db_data_copy_start_py else None
-    label_in_db_data_preprocess = 'Data Preprocess' if set_label_in_db_data_preprocess else None
-    label_in_db_data_compute = 'Model Inference' if set_label_in_db_data_compute else None
+    label_in_db_data_preprocess = 'Data Preprocessing' if set_label_in_db_data_preprocess else None
+    label_in_db_data_compute = 'Inference' if set_label_in_db_data_compute else None
     label_in_db_data_others = 'Others' if set_label_in_db_data_others else None
 
     # in-db with optimizization

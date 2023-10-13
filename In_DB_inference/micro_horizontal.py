@@ -90,7 +90,7 @@ for dataset, valuedic in datasets_result.items():
     ax.barh(index, in_db_data_model_load, bar_height, color=colors[0], hatch=hatches[0], label=label_in_db_model_load, edgecolor='black', )
     ax.barh(index, in_db_data_query, bar_height, color=colors[1], hatch=hatches[1], label=label_in_db_data_query, left=in_db_data_model_load, edgecolor='black', )
     ax.barh(index, in_db_data_copy_start_py, bar_height, color=colors[2], hatch=hatches[2], label=label_in_db_data_copy_start_py, left=in_db_data_query+in_db_data_model_load, edgecolor='black', )
-    ax.barh(index, in_db_data_preprocess, bar_height, color=colors[3], hatch=hatches[3], label=label_in_db_data_preprocess, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_model_load, edgecolor='black', )
+    ax.barh(index, in_db_data_preprocess+in_db_data_compute, bar_height, color=colors[3], hatch=hatches[3], label=label_in_db_data_preprocess, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_model_load, edgecolor='black', )
     # ax.barh(index, in_db_data_compute, bar_height, color=colors[4], hatch=hatches[4], label=label_in_db_data_compute, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_preprocess+in_db_data_model_load, edgecolor='black', )
     # ax.barh(index, in_db_data_others, bar_height, color=colors[5], hatch=hatches[5], label=label_in_db_data_others, left=in_db_data_query+in_db_data_copy_start_py+in_db_data_preprocess+in_db_data_compute+in_db_data_model_load, edgecolor='black', )
 

@@ -73,7 +73,7 @@ for dataset, valuedic in datasets_result.items():
     # set labels
     label_in_db_model_load = 'Model Loading' if set_label_in_db_model_load else None
     label_in_db_data_query = 'Data Retrieval' if set_label_in_db_data_query else None
-    label_in_db_data_copy_start_py = 'Data Copy' if set_label_in_db_data_copy_start_py else None
+    label_in_db_data_copy_start_py = 'Data Copying' if set_label_in_db_data_copy_start_py else None
     label_in_db_data_preprocess = 'Data Preprocessing & Inference' if set_label_in_db_data_preprocess else None
     # label_in_db_data_compute = 'Inference' if set_label_in_db_data_compute else None
     label_in_db_data_others = 'Others' if set_label_in_db_data_others else None
@@ -116,7 +116,7 @@ ax.set_xlabel('End-to-end Time (ms)', fontsize=20)
 # ax.legend(fontsize=set_lgend_size, loc='upper left', ncol=5)
 ax.legend(fontsize=15,
           loc='center', ncol=6,
-          bbox_to_anchor=(0.25, 1.1))
+          bbox_to_anchor=(0.22, 1.1))
 
 # Grid and save the figure
 ax.xaxis.grid(True)

@@ -8,7 +8,7 @@ from brokenaxes import brokenaxes
 
 def thousands_formatter(x, pos):
     if x >= 1e3:
-        return '{:.0f}k'.format(x * 1e-3)
+        return '{:.1f}k'.format(x * 1e-3)
     else:
         return '{:.1f}'.format(x)
 
@@ -44,55 +44,52 @@ def scale_to_ms(latencies):
 # each sub-list is "compute time" and "data fetch time"
 datasets_result = {
     'Adult': {
-        'In-Db-opt': {'diff': -0.006811057999999814, 'data_query_time_spi': 0.099216721,
-                      'mem_allocate_time': 0.006704392,
-                      'model_init_time': 0.007573304, 'data_query_time': 0.937413457,
-                      'python_compute_time': 2.878420642,
-                      'overall_query_latency': 3.830218461, 'py_conver_to_tensor': 0.01761007308959961,
-                      'py_compute': 2.603079080581665,
-                      'py_overall_duration': 2.63140869140625, 'py_diff': 0.010719537734985352},
+        'In-Db-opt': {'diff': -0.007969393999999852, 'mem_allocate_time': 0.007871151, 'model_init_time': 0.006836045,
+                      'data_query_time': 1.4322866, 'python_compute_time': 0.624381187,
+                      'overall_query_latency': 2.071473226, 'data_query_time_spi': 0.077206818,
+                      'py_conver_to_tensor': 0.021612468719482422, 'py_compute': 0.4987836265563965,
+                      'py_overall_duration': 0.49993324279785156, 'py_diff': 0.010537147521972656},
 
-        'out-DB-cpu': {'data_query_time': 0.8945093154907227, 'py_conver_to_tensor': 3.1391489505767822,
-                       'tensor_to_gpu': 0.000179290771484375, 'py_compute': 0.6464982032775879,
-                       'overall_query_latency': 5.005170583724976},
+        'out-DB-cpu': {'data_query_time': 0.6272451877593994, 'py_conver_to_tensor': 0.0235938835144043,
+                       'tensor_to_gpu': 0.00011944770812988281, 'py_compute': 0.49167609214782715,
+                       'load_model': 0.12756085395812988, 'overall_query_latency': 1.254258155822754},
     },
 
     'Disease': {
-        'In-Db-opt': {'mem_allocate_time': 0.000241846, 'data_query_time_spi': 0.092643221,
-                      'python_compute_time': 4.456881872, 'overall_query_latency': 7.531777533,
-                      'data_query_time': 3.067697677, 'diff': -0.0003152109999993158, 'model_init_time': 0.006882773,
-                      'py_conver_to_tensor': 2.6528313159942627, 'py_compute': 0.7840120792388916,
-                      'py_overall_duration': 4.027993440628052, 'py_diff': 0.5911500453948975},
+        'In-Db-opt': {'diff': -0.0067551480000001, 'data_query_time_spi': 0.073574947, 'model_init_time': 0.006799476,
+                      'mem_allocate_time': 0.006654889, 'python_compute_time': 1.045942085,
+                      'data_query_time': 0.71951581, 'overall_query_latency': 1.7790125190000001,
+                      'py_conver_to_tensor': 0.025516510009765625, 'py_compute': 0.8286852836608887,
+                      'py_overall_duration': 0.8644576072692871, 'py_diff': 0.010255813598632812},
 
-        'out-DB-cpu': {'data_query_time': 0.7599310874938965, 'py_conver_to_tensor': 2.712991952896118,
-                       'tensor_to_gpu': 0.0004315376281738281, 'py_compute': 0.7755249500274658,
-                       'overall_query_latency': 5.472174644470215},
+        'out-DB-cpu': {'data_query_time': 0.5226991176605225, 'py_conver_to_tensor': 0.02484127998352051,
+                       'tensor_to_gpu': 0.00022840499877929688, 'py_compute': 0.8290549659729004,
+                       'load_model': 0.1251354217529297, 'overall_query_latency': 1.657167673110962},
     },
 
     'Bank': {
-        'In-Db-opt': {'data_query_time': 3.9064207829999997, 'python_compute_time': 4.978618743,
-                      'data_query_time_spi': 0.115038494, 'mem_allocate_time': 0.000246575,
-                      'overall_query_latency': 8.893539688, 'diff': -0.0003386900000013071,
-                      'model_init_time': 0.008161472, 'py_conver_to_tensor': 2.878143072128296,
-                      'py_compute': 0.8705038928985596, 'py_overall_duration': 4.330329895019531,
-                      'py_diff': 0.8216829299926758},
-        'out-DB-cpu': {'data_query_time': 0.9924757480621338, 'py_conver_to_tensor': 2.880948085784912,
-                       'tensor_to_gpu': 0.00011372566223144531, 'py_compute': 0.8873722553253174,
-                       'overall_query_latency': 5.279063701629639},
+        'In-Db-opt': {'data_query_time_spi': 0.068415319, 'model_init_time': 0.006328437,
+                      'data_query_time': 1.780908539, 'mem_allocate_time': 0.009163106,
+                      'python_compute_time': 0.715492727, 'overall_query_latency': 2.511971514,
+                      'diff': -0.009241810999999878, 'py_conver_to_tensor': 0.02403855323791504,
+                      'py_compute': 0.8074800453186035, 'py_overall_duration': 0.5948076248168945,
+                      'py_diff': 0.009289026260375977},
+        'out-DB-cpu': {'data_query_time': 0.7120261192321777, 'py_conver_to_tensor': 0.02698847770690918,
+                       'tensor_to_gpu': 0.00021409988403320312, 'py_compute': 0.8072443008422852,
+                       'load_model': 0.046822547912597656, 'overall_query_latency': 1.637943983078003},
     },
 
     'AppRec': {
         'In-Db-opt':
-            {'python_compute_time': 1.8740051690000001, 'overall_query_latency': 2.443160077,
-             'data_query_time_spi': 0.093307434, 'diff': -0.006727488999999753, 'model_init_time': 0.00768204,
-             'mem_allocate_time': 0.006639138, 'data_query_time': 0.554745379,
-             'py_conver_to_tensor': 0.015256166458129883, 'py_compute': 1.6671726703643799,
-             'py_overall_duration': 1.692652702331543, 'py_diff': 0.010223865509033203}
-        ,
+            {'data_query_time_spi': 0.077303043, 'python_compute_time': 1.083512117,
+             'overall_query_latency': 1.618568955, 'diff': -0.006197264000000091, 'model_init_time': 0.007554649,
+             'mem_allocate_time': 0.006098022, 'data_query_time': 0.521304925,
+             'py_conver_to_tensor': 0.014301300048828125, 'py_compute': 0.900803804397583,
+             'py_overall_duration': 0.924717903137207, 'py_diff': 0.009612798690795898},
         'out-DB-cpu':
-            {'data_query_time': 0.5377492904663086, 'py_conver_to_tensor': 0.01552491569519043,
-             'tensor_to_gpu': 9.989738464355469e-05, 'py_compute': 1.6639730834960938,
-             'load_model': 0.16022920608520508, 'overall_query_latency': 2.189664125442505},
+            {'data_query_time': 0.5804119110107422, 'py_conver_to_tensor': 0.01865216255187988,
+             'tensor_to_gpu': 0.0001499652862548828, 'py_compute': 0.9637076377868652,
+             'load_model': 0.16712236404418945, 'overall_query_latency': 2.086137056350708},
     },
 }
 
@@ -162,7 +159,7 @@ for dataset, valuedic in datasets_result.items():
            bottom=in_db_data_model_load,
            edgecolor='black')
     ax.bar(index - bar_width / 2, out_db_data_preprocess, bar_width, color=colors[2], hatch=hatches[2], zorder=2,
-           bottom=out_db_data_query+in_db_data_model_load,
+           bottom=out_db_data_query + in_db_data_model_load,
            edgecolor='black')
     ax.bar(index - bar_width / 2, out_db_data_compute, bar_width, color=colors[3], hatch=hatches[3], zorder=2,
            bottom=out_db_data_query + in_db_data_model_load + out_db_data_preprocess,
@@ -180,9 +177,9 @@ for dataset, valuedic in datasets_result.items():
 
 # legned etc
 ax.set_ylabel(".", fontsize=20, color='white')
-fig.text(0.01, 0.5, 'End-to-end Time (ms)', va='center', rotation='vertical', fontsize=20)
+fig.text(0.01, 0.5, 'Response Time (ms)', va='center', rotation='vertical', fontsize=20)
 
-ax.set_ylim(top=6000)
+ax.set_ylim(top=2200)
 
 ax.set_xticks(indices)
 ax.set_xticklabels(datasets, rotation=0, fontsize=set_font_size)

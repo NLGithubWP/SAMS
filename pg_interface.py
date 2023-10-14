@@ -246,6 +246,44 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
 
     return orjson.dumps({"model_outputs": 1}).decode('utf-8')
 
+@exception_catcher
+def model_inference_compute_shared_memory_write_once_int(params: dict, args: Namespace):
+    global model, sliced_model, col_cardinalities, time_usage_dic
+    from model_selection.src.logger import logger
+    try:
+        mini_batch_shared = get_data_from_shared_memory()
+        logger.info(f"mini_batch_shared: <-{mini_batch_shared[:50]}->, type: {type(mini_batch_shared)}")
+
+        overall_begin = time.time()
+        mini_batch = json.loads(mini_batch_shared)
+        logger.info("-----" * 10)
+
+        time_usage_dic = {}
+
+        begin = time.time()
+        # pre-processing mini_batch
+        transformed_data = pre_processing(mini_batch)['id']
+        time_usage_dic["py_conver_to_tensor"] = time.time() - begin
+        logger.info(f"transformed data size: {len(transformed_data)}")
+
+        begin = time.time()
+        y = sliced_model(transformed_data, None)
+        time_usage_dic["py_compute"] = time.time() - begin
+        logger.info(f"Prediction Results = {y.tolist()[:2]}...")
+
+        logger.info("-----" * 10)
+        overall_end = time.time()
+        time_usage_dic["py_overall_duration"] = overall_end - overall_begin
+        time_usage_dic["py_diff"] = time_usage_dic["py_overall_duration"] - \
+                                    (time_usage_dic["py_conver_to_tensor"] + time_usage_dic["py_compute"])
+
+        logger.info(f"time usage of inference {len(transformed_data)} rows is {time_usage_dic}")
+    except:
+        logger.info(orjson.dumps(
+            {"Errored": traceback.format_exc()}).decode('utf-8'))
+
+    return orjson.dumps({"model_outputs": 1}).decode('utf-8')
+
 
 def records_results(params: str):
     global time_usage_dic

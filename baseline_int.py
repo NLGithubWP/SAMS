@@ -45,14 +45,6 @@ def fetch_and_preprocess(conn, batch_size, database):
     return rows
 
 
-def decode_libsvm(columns):
-    map_func = lambda pair: (int(pair[0]), float(pair[1]))
-    # 0 is id, 1 is label
-    id, value = zip(*map(lambda col: map_func(col.split(':')), columns[2:]))
-    sample = {'id': list(id)}
-    return sample
-
-
 def pre_processing(mini_batch_data: List[Tuple]):
     """
     mini_batch_data: [('0', '0', '123:123', '123:123', '123:123',)

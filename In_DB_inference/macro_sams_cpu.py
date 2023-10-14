@@ -45,7 +45,7 @@ def scale_to_ms(latencies):
 
 # Collecting data for plotting
 datasets_result = {
-    'Frappe': {
+    'AppRec': {
         'In-Db-opt':
             {'model_init_time': 0.007445235, 'mem_allocate_time': 0.000228569, 'data_query_time': 1.8191302120000001,
              'python_compute_time': 5.120315227, 'data_query_time_spi': 0.100664045,
@@ -79,7 +79,7 @@ datasets_result = {
                        'overall_query_latency': 4.305214881896973},
     },
 
-    'Cvd': {
+    'Disease': {
         'In-Db-opt': {'mem_allocate_time': 0.000241846, 'data_query_time_spi': 0.092643221,
                       'python_compute_time': 4.456881872, 'overall_query_latency': 7.531777533,
                       'data_query_time': 3.067697677, 'diff': -0.0003152109999993158, 'model_init_time': 0.006882773,

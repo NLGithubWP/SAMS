@@ -45,24 +45,7 @@ def scale_to_ms(latencies):
 
 # Collecting data for plotting
 datasets_result = {
-    'Frappe': {
-        'In-Db-opt':
-            {'model_init_time': 0.007445235, 'mem_allocate_time': 0.000228569, 'data_query_time': 1.8191302120000001,
-             'python_compute_time': 5.120315227, 'data_query_time_spi': 0.100664045,
-             'overall_query_latency': 6.947206643, 'diff': -0.0003159689999998605,
-             'py_conver_to_tensor': 2.4618063831329346, 'py_compute': 0.938471794128418,
-             'py_overall_duration': 4.697931289672852, 'py_diff': 0.637653112411499},
 
-        'out-DB-cpu':
-            {'data_query_time': 0.7075839042663574, 'py_conver_to_tensor': 2.4676432609558105,
-             'tensor_to_gpu': 0.0003657341003417969, 'py_compute': 0.9474043369293213,
-             'overall_query_latency': 5.193724870681763},
-
-        'out-DB-gpu':
-            {'data_query_time': 0.6995127868652344, 'py_conver_to_tensor': 2.3515465259552,
-             'tensor_to_gpu': 0.007832050323486328, 'py_compute': 0.03111410140991211,
-             'overall_query_latency': 3.233276128768921},
-    },
 
     'Adult': {
         'In-Db-opt': {'data_query_time': 1.983637511, 'python_compute_time': 5.668429231,
@@ -79,7 +62,7 @@ datasets_result = {
                        'overall_query_latency': 4.305214881896973},
     },
 
-    'Cvd': {
+    'Disease': {
         'In-Db-opt': {'mem_allocate_time': 0.000241846, 'data_query_time_spi': 0.092643221,
                       'python_compute_time': 4.456881872, 'overall_query_latency': 7.531777533,
                       'data_query_time': 3.067697677, 'diff': -0.0003152109999993158, 'model_init_time': 0.006882773,
@@ -108,6 +91,25 @@ datasets_result = {
                        'tensor_to_gpu': 0.010221481323242188, 'py_compute': 0.021872520446777344,
                        'overall_query_latency': 4.37221097946167},
     },
+
+    'AppRec': {
+        'In-Db-opt':
+            {'model_init_time': 0.007445235, 'mem_allocate_time': 0.000228569, 'data_query_time': 1.8191302120000001,
+             'python_compute_time': 5.120315227, 'data_query_time_spi': 0.100664045,
+             'overall_query_latency': 6.947206643, 'diff': -0.0003159689999998605,
+             'py_conver_to_tensor': 2.4618063831329346, 'py_compute': 0.938471794128418,
+             'py_overall_duration': 4.697931289672852, 'py_diff': 0.637653112411499},
+
+        'out-DB-cpu':
+            {'data_query_time': 0.7075839042663574, 'py_conver_to_tensor': 2.4676432609558105,
+             'tensor_to_gpu': 0.0003657341003417969, 'py_compute': 0.9474043369293213,
+             'overall_query_latency': 5.193724870681763},
+
+        'out-DB-gpu':
+            {'data_query_time': 0.6995127868652344, 'py_conver_to_tensor': 2.3515465259552,
+             'tensor_to_gpu': 0.007832050323486328, 'py_compute': 0.03111410140991211,
+             'overall_query_latency': 3.233276128768921},
+    },
 }
 
 datasets = list(datasets_result.keys())
@@ -130,8 +132,8 @@ for dataset, valuedic in datasets_result.items():
     outcpudb_med = scale_to_ms(valuedic["out-DB-cpu"])
 
     # set labesl
-    label_our_system = 'inDBNet' if set_label_our_system else None
-    label_baseline_system = 'inDBNet (seperate)' if set_label_baseline_system else None
+    label_our_system = 'INDICES' if set_label_our_system else None
+    label_baseline_system = 'INDICES (seperate)' if set_label_baseline_system else None
 
     # # out-db CPU
     in_db_data_query = outcpudb_med["data_query_time"]

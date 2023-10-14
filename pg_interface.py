@@ -250,21 +250,21 @@ def model_inference_compute_shared_memory_write_once(params: dict, args: Namespa
 def model_inference_compute_shared_memory_write_once_int(params: dict, args: Namespace):
     global model, sliced_model, col_cardinalities, time_usage_dic
     from model_selection.src.logger import logger
+    time_usage_dic = {}
+
     try:
-        mini_batch_shared = get_data_from_shared_memory()
-        logger.info(f"mini_batch_shared: <-{mini_batch_shared[:50]}->, type: {type(mini_batch_shared)}")
+        mini_batch_shared = get_data_from_shared_memory_int(int(params["rows"]))
+        # logger.info(f"mini_batch_shared: <-{mini_batch_shared[:50]}->, type: {type(mini_batch_shared)}")
+        logger.info(f"mini_batch_shared: <-{mini_batch_shared}->, type: {type(mini_batch_shared)}")
 
         overall_begin = time.time()
-        mini_batch = json.loads(mini_batch_shared)
         logger.info("-----" * 10)
-
-        time_usage_dic = {}
 
         begin = time.time()
         # pre-processing mini_batch
-        transformed_data = pre_processing(mini_batch)['id']
+        transformed_data = torch.LongTensor(mini_batch_shared)
         time_usage_dic["py_conver_to_tensor"] = time.time() - begin
-        logger.info(f"transformed data size: {len(transformed_data)}")
+        logger.info(f"transformed data size: {transformed_data.size()}")
 
         begin = time.time()
         y = sliced_model(transformed_data, None)
@@ -306,3 +306,16 @@ def get_data_from_shared_memory(shmem_name="my_shmem"):
     # Close
     shm.close()
     return data.rstrip('\x00')
+
+
+import numpy as np
+
+def get_data_from_shared_memory_int(n_rows):
+    # Connect to existing shared memory by name
+    shm = shared_memory.SharedMemory(name="my_shared_memory")
+    # Map the shared memory to a numpy array. Assuming i32 integers.
+    data = np.frombuffer(shm.buf, dtype=np.int32)
+    # Reshape the 1D array to have n_rows and let numpy infer the number of columns
+    data = data.reshape(n_rows, -1)
+    return data
+

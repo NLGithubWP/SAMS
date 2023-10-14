@@ -40,7 +40,7 @@ def read_json(file_name):
 def fetch_and_preprocess(conn, batch_size, database):
     cur = conn.cursor()
     # Select rows greater than last_id
-    cur.execute(f"SELECT * FROM {database}_train LIMIT {batch_size}")
+    cur.execute(f"SELECT * FROM {database}_int_train LIMIT {batch_size}")
     rows = cur.fetchall()
     return rows
 
@@ -61,13 +61,9 @@ def pre_processing(mini_batch_data: List[Tuple]):
     feat_id = []
     feat_value = []
     y = []
-
-    for i in range(sample_lines):
-        row_value = mini_batch_data[i]
-        sample = decode_libsvm(row_value)
-        feat_id.append(sample['id'])
-    feat_id = torch.LongTensor(feat_id)
-    return {'id': feat_id}
+    feat_id = torch.LongTensor(mini_batch_data)
+    print("feat_id = ", feat_id[:, 2:], feat_id.size())
+    return {'id': feat_id[:, 2:]}
 
 
 def fetch_data(database, batch_size):

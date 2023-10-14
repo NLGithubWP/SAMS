@@ -62,7 +62,7 @@ def pre_processing(mini_batch_data: List[Tuple]):
     feat_value = []
     y = []
     feat_id = torch.LongTensor(mini_batch_data)
-    print("feat_id = ", feat_id[:, 2:], feat_id.size())
+    print("feat_id = ", feat_id[:, 2:].size())
     return {'id': feat_id[:, 2:]}
 
 

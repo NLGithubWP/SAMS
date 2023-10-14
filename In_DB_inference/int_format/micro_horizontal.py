@@ -35,30 +35,36 @@ datasets_result = {
 
     'INDICES w/ all optimizations':
         {'data_query_time_spi': 0.077303043, 'python_compute_time': 1.083512117,
-         'overall_query_latency': 1.618568955, 'diff': -0.006197264000000091, 'model_init_time': 0.007554649,
+         'overall_query_latency': 1.618568955, 'diff': -0.006197264000000091,
+         'model_init_time': 0.007554649,
+         'mem_allocate_time': 0.006098022, 'data_query_time': 0.521304925,
+         'py_conver_to_tensor': 0.014301300048828125, 'py_compute': 0.900803804397583,
+         'py_overall_duration': 0.924717903137207, 'py_diff': 0.009612798690795898},
+
+    'INDICES w/o memory sharing':
+
+        {'data_query_time_spi': 0.077303043, 'python_compute_time': 1.083512117,
+         'overall_query_latency': 1.618568955, 'diff': -0.006197264000000091,
+         'model_init_time': 0.007554649,
+         'mem_allocate_time': 0.006098022, 'data_query_time': 0.521304925,
+         'py_conver_to_tensor': 0.014301300048828125, 'py_compute': 0.900803804397583,
+         'py_overall_duration': 1.083512117 - 0.33, 'py_diff': 0.009612798690795898},
+
+    'INDICES w/o SPI':
+        {'data_query_time_spi': 0.5804119110107422, 'python_compute_time': 0.924717903137207,
+         'overall_query_latency': 1.618568955, 'diff': -0.006197264000000091,
+         'model_init_time': 0.007554649,
          'mem_allocate_time': 0.006098022, 'data_query_time': 0.521304925,
          'py_conver_to_tensor': 0.014301300048828125, 'py_compute': 0.900803804397583,
          'py_overall_duration': 0.924717903137207, 'py_diff': 0.009612798690795898},
 
     'INDICES w/o model caching':
         {'data_query_time_spi': 0.077303043, 'python_compute_time': 1.083512117,
-         'overall_query_latency': 1.618568955, 'diff': -0.006197264000000091, 'model_init_time': 2.987871457,
+         'overall_query_latency': 1.618568955, 'diff': -0.006197264000000091,
+         'model_init_time': 2.057871457,
          'mem_allocate_time': 0.006098022, 'data_query_time': 0.521304925,
          'py_conver_to_tensor': 0.014301300048828125, 'py_compute': 0.900803804397583,
          'py_overall_duration': 0.924717903137207, 'py_diff': 0.009612798690795898},
-
-    'INDICES w/o SPI':
-        {'data_query_time_spi': 0.5804119110107422, 'python_compute_time': 0.924717903137207,
-         'overall_query_latency': 1.618568955, 'diff': -0.006197264000000091, 'model_init_time': 0.007554649,
-         'mem_allocate_time': 0.006098022, 'data_query_time': 0.521304925,
-         'py_conver_to_tensor': 0.014301300048828125, 'py_compute': 0.900803804397583,
-         'py_overall_duration': 0.924717903137207, 'py_diff': 0.009612798690795898},
-
-    'INDICES w/o memory sharing':
-        {'model_init_time': 0.008697525, 'data_query_time_spi': 0.069067049, 'data_query_time': 2.915582513,
-         'python_compute_time': 5.020754292, 'overall_query_latency': 7.945128665, 'diff': -9.433500000000095e-05,
-         'py_conver_to_tensor': 2.4056007289886475, 'py_compute': 0.9061615371704102,
-         'py_overall_duration': 2.560455799102783, 'py_diff': 0.4286935329437256},
 
 }
 
